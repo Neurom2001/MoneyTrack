@@ -24,10 +24,10 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
   const t = TRANSLATIONS[language];
 
   const features = [
-    { icon: <TrendingUp size={16} />, text: t.feat1 },
-    { icon: <PieChart size={16} />, text: t.feat2 },
-    { icon: <Wallet size={16} />, text: t.feat3 },
-    { icon: <ShieldCheck size={16} />, text: t.feat4 },
+    { icon: <TrendingUp size={14} />, text: t.feat1 },
+    { icon: <PieChart size={14} />, text: t.feat2 },
+    { icon: <Wallet size={14} />, text: t.feat3 },
+    { icon: <ShieldCheck size={14} />, text: t.feat4 },
   ];
 
   const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
@@ -103,7 +103,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen lg:h-screen w-full bg-dark-bg flex flex-col lg:flex-row text-white font-sans lg:overflow-hidden">
+    <div className="min-h-screen w-full bg-dark-bg flex flex-col lg:flex-row text-white font-sans lg:overflow-hidden">
       
       {/* Toast Notification */}
       {toast && (
@@ -117,25 +117,27 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
 
       {/* Branding & Features Section */}
       {/* Mobile: Order 2 (Bottom), Desktop: Order 1 (Left) */}
-      <div className="w-full lg:w-1/2 order-2 lg:order-1 bg-slate-900 border-t lg:border-t-0 lg:border-r border-dark-border relative flex flex-col z-10">
+      <div className="w-full lg:w-1/2 order-2 lg:order-1 bg-slate-900 border-t lg:border-t-0 lg:border-r border-dark-border relative flex flex-col z-10 lg:h-screen">
          {/* Background decoration */}
          <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-20 lg:opacity-10">
             <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary rounded-full blur-3xl animate-pulse"></div>
             <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-blue-500 rounded-full blur-3xl opacity-50"></div>
          </div>
 
-         <div className="relative z-10 flex flex-col items-center lg:items-start text-center lg:text-left w-full h-full p-8 lg:p-0 lg:justify-center lg:pl-12 py-12 lg:py-0">
-            <div className="flex items-center gap-3 mb-6">
-                <div className="bg-gradient-to-br from-primary to-emerald-600 p-3 rounded-xl shadow-lg shadow-primary/20">
-                    <Wallet className="text-slate-900 w-8 h-8" />
+         {/* Content Container - Added padding-top for desktop to prevent address bar overlap */}
+         <div className="relative z-10 flex flex-col items-center lg:items-start text-center lg:text-left w-full h-full p-8 lg:px-16 lg:pt-28 lg:pb-12">
+            <div className="flex items-center gap-3 mb-4">
+                <div className="bg-gradient-to-br from-primary to-emerald-600 p-2.5 rounded-xl shadow-lg shadow-primary/20">
+                    <Wallet className="text-slate-900 w-6 h-6" />
                 </div>
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-white">{t.appName}</h1>
-                    <p className="text-emerald-400 font-medium text-sm tracking-widest uppercase mt-0.5">{t.appDesc}</p>
+                    {/* Reduced Font Size: text-2xl */}
+                    <h1 className="text-2xl font-bold tracking-tight text-white">{t.appName}</h1>
+                    <p className="text-emerald-400 font-medium text-xs tracking-widest uppercase mt-0.5">{t.appDesc}</p>
                 </div>
             </div>
 
-            <p className="text-slate-300 text-sm mb-8 leading-relaxed max-w-md hidden lg:block">
+            <p className="text-slate-300 text-xs sm:text-sm mb-8 leading-relaxed max-w-md hidden lg:block">
                 {language === 'my' ? (
                   <>သင့်ငွေကြေးစီမံခန့်ခွဲမှုအတွက် အကောင်းဆုံးလက်ထောက်။ <br/>မြန်မာဘာသာဖြင့် အသုံးပြုရလွယ်ကူပြီး တိကျသေချာသော စာရင်းအင်းစနစ်။</>
                 ) : language === 'ja' ? (
@@ -145,9 +147,9 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                 )}
             </p>
 
-            <div className="space-y-4 mb-10 w-full max-w-sm">
+            <div className="space-y-3 mb-auto w-full max-w-sm hidden lg:block">
                 {features.map((feature, idx) => (
-                    <div key={idx} className="flex items-center gap-3 text-slate-300 text-sm p-3 bg-slate-800/40 rounded-xl border border-slate-700/50 hover:bg-slate-800/80 transition group">
+                    <div key={idx} className="flex items-center gap-3 text-slate-300 text-xs p-2.5 bg-slate-800/40 rounded-xl border border-slate-700/50 hover:bg-slate-800/80 transition group">
                         <div className="text-primary bg-primary/10 p-1.5 rounded-lg group-hover:bg-primary group-hover:text-slate-900 transition duration-300 shrink-0">{feature.icon}</div>
                         <span className="font-medium">{feature.text}</span>
                     </div>
@@ -155,7 +157,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
             </div>
 
             {/* Footer */}
-            <div className="text-center lg:text-left flex flex-col items-center lg:items-start gap-1 w-full pt-6 border-t border-slate-800 lg:border-none">
+            <div className="text-center lg:text-left flex flex-col items-center lg:items-start gap-1 w-full pt-8 lg:pt-0 border-t border-slate-800 lg:border-none mt-auto">
                  <div className="flex items-center gap-1 font-bold text-slate-500 text-xs">
                      <Copyright size={12} /> {new Date().getFullYear()} {t.appName}. All rights reserved.
                  </div>
@@ -177,7 +179,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
 
       {/* Auth Form Section */}
       {/* Mobile: Order 1 (Top), Desktop: Order 2 (Right) */}
-      <div className="w-full lg:w-1/2 order-1 lg:order-2 p-6 lg:px-12 flex items-center justify-center bg-slate-800/30 flex-grow backdrop-blur-sm relative z-20 py-10 lg:py-0">
+      <div className="w-full lg:w-1/2 order-1 lg:order-2 p-6 lg:px-16 flex items-center justify-center bg-slate-800/30 flex-grow lg:h-screen backdrop-blur-sm relative z-20 py-12 lg:py-0 overflow-y-auto">
         
         <div className="w-full max-w-md space-y-5 animate-in fade-in slide-in-from-right-8 duration-500 mt-2 lg:mt-0">
             
@@ -192,15 +194,16 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
             </div>
 
             <div className="text-center lg:text-left">
-                <h2 className="text-3xl font-bold text-white mb-1.5">
+                {/* Reduced font size for Desktop */}
+                <h2 className="text-2xl lg:text-3xl font-bold text-white mb-1.5">
                     {isLoginView ? t.loginTitle : t.registerTitle}
                 </h2>
-                <p className="text-slate-400 text-sm">
+                <p className="text-slate-400 text-xs sm:text-sm">
                     {isLoginView ? t.loginSubtitle : t.registerSubtitle}
                 </p>
             </div>
 
-            {/* Critical Warning Box - Compact Version for Desktop */}
+            {/* Critical Warning Box - Compact Version */}
             <div className="bg-amber-900/20 border border-amber-600/30 rounded-lg p-3 flex gap-3 items-start text-left shadow-sm">
                 <AlertTriangle className="text-amber-500 shrink-0 mt-0.5" size={16} />
                 <div className="text-xs text-amber-200/80 leading-relaxed">
@@ -227,7 +230,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            className="w-full pl-11 pr-4 py-2.5 bg-slate-900 border border-slate-700 text-white text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition placeholder-slate-600 shadow-sm"
+                            className="w-full pl-11 pr-4 py-3 bg-slate-900 border border-slate-700 text-white text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition placeholder-slate-600 shadow-sm"
                             placeholder={t.usernamePlaceholder}
                             disabled={isLoading}
                             autoComplete="username"
@@ -247,7 +250,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                             type={showPassword ? "text" : "password"}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full pl-11 pr-11 py-2.5 bg-slate-900 border border-slate-700 text-white text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition placeholder-slate-600 shadow-sm"
+                            className="w-full pl-11 pr-11 py-3 bg-slate-900 border border-slate-700 text-white text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition placeholder-slate-600 shadow-sm"
                             placeholder={t.passwordPlaceholder}
                             disabled={isLoading}
                             autoComplete={isLoginView ? "current-password" : "new-password"}
@@ -265,7 +268,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className={`w-full bg-gradient-to-r from-emerald-600 to-primary hover:from-emerald-500 hover:to-emerald-400 text-white font-bold py-2.5 px-4 rounded-xl shadow-lg shadow-emerald-900/30 transition duration-300 transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 group text-sm mt-2 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`w-full bg-gradient-to-r from-emerald-600 to-primary hover:from-emerald-500 hover:to-emerald-400 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-emerald-900/30 transition duration-300 transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 group text-sm mt-2 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                     {isLoading ? (
                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
