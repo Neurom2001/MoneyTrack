@@ -66,6 +66,12 @@ export const TRANSLATIONS = {
     noData: "စာရင်းမရှိသေးပါ",
     items: "ခု",
     
+    // Empty States
+    emptyTransactionsTitle: "စာရင်းသွင်းထားခြင်း မရှိသေးပါ",
+    emptyTransactionsDesc: "အပေါင်း (+) ခလုတ်ကိုနှိပ်၍ နေ့စဉ်ဝင်ငွေ/ထွက်ငွေများကို စတင်မှတ်သားလိုက်ပါ။",
+    emptyChartTitle: "အချက်အလက်များ မရှိသေးပါ",
+    emptyChartDesc: "စာရင်းများထည့်သွင်းလိုက်ပါက ဤနေရာတွင် နှိုင်းယှဉ်ချက်ဇယားများ ပေါ်လာပါမည်။",
+
     // Actions
     edit: "ပြင်ဆင်မည်",
     delete: "ဖျက်မည်",
@@ -186,6 +192,12 @@ export const TRANSLATIONS = {
     noData: "No transactions yet",
     items: "items",
     
+    // Empty States
+    emptyTransactionsTitle: "No transactions yet",
+    emptyTransactionsDesc: "Tap the + button to start tracking your income and expenses.",
+    emptyChartTitle: "No data to display",
+    emptyChartDesc: "Add transactions to see your daily comparison charts here.",
+
     // Actions
     edit: "Edit",
     delete: "Delete",
@@ -306,6 +318,12 @@ export const TRANSLATIONS = {
     noData: "取引はまだありません",
     items: "件",
     
+    // Empty States
+    emptyTransactionsTitle: "まだ取引がありません",
+    emptyTransactionsDesc: "+ ボタンをタップして、収入や支出の記録を始めましょう。",
+    emptyChartTitle: "データがありません",
+    emptyChartDesc: "取引を追加すると、ここに日次の比較グラフが表示されます。",
+
     // Actions
     edit: "編集",
     delete: "削除",

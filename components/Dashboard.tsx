@@ -10,7 +10,7 @@ import {
   LogOut, Plus, Trash2, Home, Download, Loader2, ArrowUpDown, ArrowUp, ArrowDown, 
   X, Edit, Save, CheckCircle2, AlertCircle, Search, PieChart, BarChart3, LineChart as LineChartIcon,
   Utensils, Bus, ShoppingBag, Stethoscope, Zap, Gift, Smartphone, Briefcase, GraduationCap, CircleDollarSign,
-  Banknote, TrendingUp, Wallet, ArrowLeftRight, Heart, Copyright, Filter, Lock, HelpCircle, Mail, Send, Settings, Target, AlertTriangle, SlidersHorizontal, Languages, Moon, Sun
+  Banknote, TrendingUp, Wallet, ArrowLeftRight, Heart, Copyright, Filter, Lock, HelpCircle, Mail, Send, Settings, Target, AlertTriangle, SlidersHorizontal, Languages, Moon, Sun, ClipboardList, PiggyBank
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
@@ -696,7 +696,9 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                         onClick={openBudgetModal}
                         className="bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 border border-dashed border-slate-300 dark:border-slate-500 text-emerald-600 dark:text-emerald-400 font-bold py-4 px-6 rounded-xl transition w-full flex flex-col items-center justify-center gap-2"
                     >
-                        <Target size={24} className="mb-1 text-emerald-500" />
+                        <div className="bg-emerald-100 dark:bg-emerald-900/30 p-3 rounded-full mb-1">
+                            <PiggyBank size={28} className="text-emerald-500" />
+                        </div>
                         <span className="text-base sm:text-sm">🎯 {t.setBudget}</span>
                         <span className="text-xs text-slate-500 dark:text-slate-400 font-normal">{t.setBudgetDesc}</span>
                     </button>
@@ -813,8 +815,14 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
               <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
                 {filteredAndSortedTransactions.length === 0 ? (
                   <tr>
-                    <td colSpan={3} className="px-4 py-8 text-center text-slate-500 dark:text-slate-400 italic">
-                      {t.noData}
+                    <td colSpan={3} className="px-4 py-12 text-center text-slate-500 dark:text-slate-400">
+                      <div className="flex flex-col items-center justify-center animate-in fade-in duration-500">
+                          <div className="bg-slate-100 dark:bg-slate-700/50 p-4 rounded-full mb-3">
+                              <ClipboardList size={40} className="text-slate-400" />
+                          </div>
+                          <p className="text-slate-600 dark:text-slate-300 font-bold mb-1 text-base">{t.emptyTransactionsTitle}</p>
+                          <p className="text-xs text-slate-400 dark:text-slate-500 max-w-xs leading-relaxed">{t.emptyTransactionsDesc}</p>
+                      </div>
                     </td>
                   </tr>
                 ) : (
@@ -834,52 +842,63 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
         </div>
 
         {/* Charts */}
-        {transactions.length > 0 && (
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 overflow-hidden transition-colors">
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 overflow-hidden transition-colors min-h-[350px] flex flex-col">
              <div className="flex justify-between items-center mb-4">
                  <h3 className="text-base sm:text-sm font-bold text-slate-800 dark:text-white">{t.chartTitle}</h3>
-                 <div className="flex bg-slate-100 dark:bg-slate-900 rounded-lg p-1 gap-1">
-                     <button onClick={() => setChartType('bar')} className={`p-2 rounded ${chartType === 'bar' ? 'bg-white dark:bg-slate-600 shadow-sm text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-white'}`}><BarChart3 size={18}/></button>
-                     <button onClick={() => setChartType('line')} className={`p-2 rounded ${chartType === 'line' ? 'bg-white dark:bg-slate-600 shadow-sm text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-white'}`}><LineChartIcon size={18}/></button>
+                 {transactions.length > 0 && (
+                    <div className="flex bg-slate-100 dark:bg-slate-900 rounded-lg p-1 gap-1">
+                        <button onClick={() => setChartType('bar')} className={`p-2 rounded ${chartType === 'bar' ? 'bg-white dark:bg-slate-600 shadow-sm text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-white'}`}><BarChart3 size={18}/></button>
+                        <button onClick={() => setChartType('line')} className={`p-2 rounded ${chartType === 'line' ? 'bg-white dark:bg-slate-600 shadow-sm text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-white'}`}><LineChartIcon size={18}/></button>
+                    </div>
+                 )}
+             </div>
+             
+             {transactions.length === 0 ? (
+                <div className="flex-grow flex flex-col items-center justify-center text-center opacity-75 py-10">
+                    <div className="bg-slate-100 dark:bg-slate-700/50 p-4 rounded-full mb-3">
+                        <BarChart3 size={48} className="text-slate-400" />
+                    </div>
+                    <p className="text-slate-600 dark:text-slate-300 font-bold mb-1">{t.emptyChartTitle}</p>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm max-w-xs">{t.emptyChartDesc}</p>
+                </div>
+             ) : (
+                 <div className="h-72 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                        {chartType === 'bar' ? (
+                            <BarChart data={chartData}>
+                                <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#334155' : '#e2e8f0'} />
+                                <XAxis dataKey="name" stroke={theme === 'dark' ? '#94a3b8' : '#64748b'} fontSize={12} tickLine={false} />
+                                <YAxis stroke={theme === 'dark' ? '#94a3b8' : '#64748b'} fontSize={12} tickLine={false} />
+                                <Tooltip contentStyle={{ backgroundColor: theme === 'dark' ? '#1e293b' : '#fff', borderColor: theme === 'dark' ? '#334155' : '#e2e8f0', color: theme === 'dark' ? '#f1f5f9' : '#0f172a', fontSize: '12px' }} />
+                                <Legend />
+                                <Bar dataKey="income" name={t.income} fill="#10b981" radius={[4, 4, 0, 0]} />
+                                <Bar dataKey="expense" name={t.expense} fill="#ef4444" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        ) : chartType === 'line' ? (
+                            <LineChart data={chartData}>
+                                <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#334155' : '#e2e8f0'} />
+                                <XAxis dataKey="name" stroke={theme === 'dark' ? '#94a3b8' : '#64748b'} fontSize={12} tickLine={false} />
+                                <YAxis stroke={theme === 'dark' ? '#94a3b8' : '#64748b'} fontSize={12} tickLine={false} />
+                                <Tooltip contentStyle={{ backgroundColor: theme === 'dark' ? '#1e293b' : '#fff', borderColor: theme === 'dark' ? '#334155' : '#e2e8f0', color: theme === 'dark' ? '#f1f5f9' : '#0f172a', fontSize: '12px' }} />
+                                <Legend />
+                                <Line type="monotone" dataKey="income" name={t.income} stroke="#10b981" strokeWidth={3} dot={false} />
+                                <Line type="monotone" dataKey="expense" name={t.expense} stroke="#ef4444" strokeWidth={3} dot={false} />
+                            </LineChart>
+                        ) : (
+                            <AreaChart data={chartData}>
+                                <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#334155' : '#e2e8f0'} />
+                                <XAxis dataKey="name" stroke={theme === 'dark' ? '#94a3b8' : '#64748b'} fontSize={12} tickLine={false} />
+                                <YAxis stroke={theme === 'dark' ? '#94a3b8' : '#64748b'} fontSize={12} tickLine={false} />
+                                <Tooltip contentStyle={{ backgroundColor: theme === 'dark' ? '#1e293b' : '#fff', borderColor: theme === 'dark' ? '#334155' : '#e2e8f0', color: theme === 'dark' ? '#f1f5f9' : '#0f172a', fontSize: '12px' }} />
+                                <Legend />
+                                <Area type="monotone" dataKey="income" name={t.income} stroke="#10b981" fill="#10b981" fillOpacity={0.2} />
+                                <Area type="monotone" dataKey="expense" name={t.expense} stroke="#ef4444" fill="#ef4444" fillOpacity={0.2} />
+                            </AreaChart>
+                        )}
+                    </ResponsiveContainer>
                  </div>
-             </div>
-             <div className="h-72 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                    {chartType === 'bar' ? (
-                        <BarChart data={chartData}>
-                            <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#334155' : '#e2e8f0'} />
-                            <XAxis dataKey="name" stroke={theme === 'dark' ? '#94a3b8' : '#64748b'} fontSize={12} tickLine={false} />
-                            <YAxis stroke={theme === 'dark' ? '#94a3b8' : '#64748b'} fontSize={12} tickLine={false} />
-                            <Tooltip contentStyle={{ backgroundColor: theme === 'dark' ? '#1e293b' : '#fff', borderColor: theme === 'dark' ? '#334155' : '#e2e8f0', color: theme === 'dark' ? '#f1f5f9' : '#0f172a', fontSize: '12px' }} />
-                            <Legend />
-                            <Bar dataKey="income" name={t.income} fill="#10b981" radius={[4, 4, 0, 0]} />
-                            <Bar dataKey="expense" name={t.expense} fill="#ef4444" radius={[4, 4, 0, 0]} />
-                        </BarChart>
-                    ) : chartType === 'line' ? (
-                        <LineChart data={chartData}>
-                            <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#334155' : '#e2e8f0'} />
-                            <XAxis dataKey="name" stroke={theme === 'dark' ? '#94a3b8' : '#64748b'} fontSize={12} tickLine={false} />
-                            <YAxis stroke={theme === 'dark' ? '#94a3b8' : '#64748b'} fontSize={12} tickLine={false} />
-                            <Tooltip contentStyle={{ backgroundColor: theme === 'dark' ? '#1e293b' : '#fff', borderColor: theme === 'dark' ? '#334155' : '#e2e8f0', color: theme === 'dark' ? '#f1f5f9' : '#0f172a', fontSize: '12px' }} />
-                            <Legend />
-                            <Line type="monotone" dataKey="income" name={t.income} stroke="#10b981" strokeWidth={3} dot={false} />
-                            <Line type="monotone" dataKey="expense" name={t.expense} stroke="#ef4444" strokeWidth={3} dot={false} />
-                        </LineChart>
-                    ) : (
-                        <AreaChart data={chartData}>
-                            <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#334155' : '#e2e8f0'} />
-                            <XAxis dataKey="name" stroke={theme === 'dark' ? '#94a3b8' : '#64748b'} fontSize={12} tickLine={false} />
-                            <YAxis stroke={theme === 'dark' ? '#94a3b8' : '#64748b'} fontSize={12} tickLine={false} />
-                            <Tooltip contentStyle={{ backgroundColor: theme === 'dark' ? '#1e293b' : '#fff', borderColor: theme === 'dark' ? '#334155' : '#e2e8f0', color: theme === 'dark' ? '#f1f5f9' : '#0f172a', fontSize: '12px' }} />
-                            <Legend />
-                            <Area type="monotone" dataKey="income" name={t.income} stroke="#10b981" fill="#10b981" fillOpacity={0.2} />
-                            <Area type="monotone" dataKey="expense" name={t.expense} stroke="#ef4444" fill="#ef4444" fillOpacity={0.2} />
-                        </AreaChart>
-                    )}
-                </ResponsiveContainer>
-             </div>
-          </div>
-        )}
+             )}
+        </div>
 
         {/* Home Button */}
         {!isCurrentMonth && (
