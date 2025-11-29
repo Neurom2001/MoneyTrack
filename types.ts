@@ -1,3 +1,4 @@
+
 export enum TransactionType {
   INCOME = 'INCOME',
   EXPENSE = 'EXPENSE',
@@ -30,3 +31,5 @@ export interface BudgetSettings {
   danger_percent: number;
   updated_at?: string; // Needed to check if budget is stale (from previous month)
 }
+
+export type Language = 'my' | 'en' | 'ja';

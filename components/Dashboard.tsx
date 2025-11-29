@@ -9,12 +9,13 @@ import {
   LogOut, Plus, Trash2, Home, Download, Loader2, ArrowUpDown, ArrowUp, ArrowDown, 
   X, Edit, Save, CheckCircle2, AlertCircle, Search, PieChart, BarChart3, LineChart as LineChartIcon,
   Utensils, Bus, ShoppingBag, Stethoscope, Zap, Gift, Smartphone, Briefcase, GraduationCap, CircleDollarSign,
-  Banknote, TrendingUp, Wallet, ArrowLeftRight, Heart, Copyright, Filter, Lock, HelpCircle, Mail, Send, Settings, Target, AlertTriangle, Globe, SlidersHorizontal, Check
+  Banknote, TrendingUp, Wallet, ArrowLeftRight, Heart, Copyright, Filter, Lock, HelpCircle, Mail, Send, Settings, Target, AlertTriangle, Globe, SlidersHorizontal, Check, Languages
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
   LineChart, Line, AreaChart, Area 
 } from 'recharts';
+import { TRANSLATIONS, Language } from '../utils/translations';
 
 interface DashboardProps {
   currentUser: string;
@@ -25,30 +26,6 @@ type SortKey = 'date' | 'label' | 'amount';
 type SortDirection = 'asc' | 'desc';
 type ChartType = 'bar' | 'line' | 'area';
 
-// --- Categories Configuration ---
-
-const EXPENSE_CATEGORIES = [
-  { label: 'အစားအသောက်', icon: <Utensils size={20} /> },
-  { label: 'လမ်းစရိတ်', icon: <Bus size={20} /> },
-  { label: 'ဈေးဝယ်', icon: <ShoppingBag size={20} /> },
-  { label: 'ကျန်းမာရေး', icon: <Stethoscope size={20} /> },
-  { label: 'မီတာ/အင်တာနက်', icon: <Zap size={20} /> },
-  { label: 'ဖုန်းဘေလ်', icon: <Smartphone size={20} /> },
-  { label: 'လက်ဆောင်/အလှူ', icon: <Gift size={20} /> },
-  { label: 'လုပ်ငန်းသုံး', icon: <Briefcase size={20} /> },
-  { label: 'ပညာရေး', icon: <GraduationCap size={20} /> },
-  { label: 'အထွေထွေ', icon: <CircleDollarSign size={20} /> },
-];
-
-const INCOME_CATEGORIES = [
-  { label: 'လစာ', icon: <Banknote size={20} /> },
-  { label: 'ဘောနပ်စ်', icon: <TrendingUp size={20} /> },
-  { label: 'လုပ်ငန်း/အရောင်း', icon: <ShoppingBag size={20} /> },
-  { label: 'မုန့်ဖိုး', icon: <Wallet size={20} /> },
-  { label: 'ပြန်ရငွေ', icon: <ArrowLeftRight size={20} /> },
-  { label: 'အထွေထွေ', icon: <CircleDollarSign size={20} /> },
-];
-
 const CURRENCIES = [
   { id: 'MMK', label: 'MMK', symbol: 'ကျပ်' },
   { id: 'USD', label: 'USD', symbol: '$' },
@@ -56,7 +33,40 @@ const CURRENCIES = [
   { id: 'SGD', label: 'SGD', symbol: 'S$' },
 ];
 
+const LANGUAGES = [
+  { code: 'my', label: 'Myanmar' },
+  { code: 'en', label: 'English' },
+  { code: 'ja', label: 'Japanese' },
+];
+
 const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
+  // --- State ---
+  const [language, setLanguage] = useState<Language>((localStorage.getItem('language') as Language) || 'my');
+  const t = TRANSLATIONS[language];
+
+  // Helper function to generate categories based on current language
+  const getExpenseCategories = () => [
+    { label: t.cat_food, icon: <Utensils size={20} /> },
+    { label: t.cat_transport, icon: <Bus size={20} /> },
+    { label: t.cat_shopping, icon: <ShoppingBag size={20} /> },
+    { label: t.cat_health, icon: <Stethoscope size={20} /> },
+    { label: t.cat_bill, icon: <Zap size={20} /> },
+    { label: t.cat_phone, icon: <Smartphone size={20} /> },
+    { label: t.cat_gift, icon: <Gift size={20} /> },
+    { label: t.cat_work, icon: <Briefcase size={20} /> },
+    { label: t.cat_education, icon: <GraduationCap size={20} /> },
+    { label: t.cat_general, icon: <CircleDollarSign size={20} /> },
+  ];
+
+  const getIncomeCategories = () => [
+    { label: t.cat_salary, icon: <Banknote size={20} /> },
+    { label: t.cat_bonus, icon: <TrendingUp size={20} /> },
+    { label: t.cat_sales, icon: <ShoppingBag size={20} /> },
+    { label: t.cat_pocket, icon: <Wallet size={20} /> },
+    { label: t.cat_refund, icon: <ArrowLeftRight size={20} /> },
+    { label: t.cat_general, icon: <CircleDollarSign size={20} /> },
+  ];
+
   // --- Helpers ---
   const getLocalDate = () => {
     const today = new Date();
@@ -73,7 +83,6 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
     return `${year}-${month}`;
   };
 
-  // --- State ---
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [amount, setAmount] = useState('');
   const [label, setLabel] = useState('');
@@ -127,6 +136,10 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
   const [chartType, setChartType] = useState<ChartType>('bar');
 
   // --- Effects ---
+  useEffect(() => {
+    localStorage.setItem('language', language);
+  }, [language]);
+
   useEffect(() => {
     loadData();
     loadBudget();
@@ -232,12 +245,12 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
     const val = parseInt(tempBudget);
     
     if (isNaN(val) || val <= 0) {
-        showToast('ကျေးဇူးပြု၍ ပမာဏကို မှန်ကန်စွာထည့်ပါ', 'error');
+        showToast(language === 'my' ? 'ကျေးဇူးပြု၍ ပမာဏကို မှန်ကန်စွာထည့်ပါ' : 'Please enter a valid amount', 'error');
         return;
     }
 
     if (tempWarning >= tempDanger) {
-        showToast('သတိပေးချက် ရာခိုင်နှုန်းသည် အန္တရာယ် ရာခိုင်နှုန်းထက် နည်းရပါမည်', 'error');
+        showToast(language === 'my' ? 'သတိပေးချက် ရာခိုင်နှုန်းသည် အန္တရာယ် ရာခိုင်နှုန်းထက် နည်းရပါမည်' : 'Warning % must be less than Critical %', 'error');
         return;
     }
 
@@ -253,7 +266,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
         setWarningPercent(tempWarning);
         setDangerPercent(tempDanger);
         setShowBudgetModal(false);
-        showToast('ဘတ်ဂျက် setting များကို သိမ်းဆည်းပြီးပါပြီ');
+        showToast(language === 'my' ? 'ဘတ်ဂျက် setting များကို သိမ်းဆည်းပြီးပါပြီ' : 'Budget settings saved');
     } else {
         showToast('Error saving budget: ' + error, 'error');
     }
@@ -264,7 +277,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
     if (success) {
         setBudgetLimit(0);
         setShowBudgetModal(false);
-        showToast('ဘတ်ဂျက် ဖျက်သိမ်းလိုက်ပါပြီ');
+        showToast(language === 'my' ? 'ဘတ်ဂျက် ဖျက်သိမ်းလိုက်ပါပြီ' : 'Budget removed');
     } else {
         showToast('Error removing budget: ' + error, 'error');
     }
@@ -289,9 +302,9 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
           if (success) {
             // Optimistic Update
             setTransactions(prev => prev.map(t => t.id === editingId ? updatedPayload : t));
-            showToast('စာရင်း ပြင်ဆင်ပြီးပါပြီ', 'success');
+            showToast(language === 'my' ? 'စာရင်း ပြင်ဆင်ပြီးပါပြီ' : 'Transaction updated', 'success');
           } else {
-            showToast('ပြင်ဆင်မရပါ: ' + (error || 'Unknown error'), 'error');
+            showToast('Update failed: ' + (error || 'Unknown error'), 'error');
           }
         }
       } else {
@@ -306,9 +319,9 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
         if (data) {
           // Optimistic Update
           setTransactions(prev => [...prev, data]);
-          showToast('စာရင်းသစ် ထည့်ပြီးပါပြီ', 'success');
+          showToast(language === 'my' ? 'စာရင်းသစ် ထည့်ပြီးပါပြီ' : 'Transaction added', 'success');
         } else {
-          showToast('စာရင်းထည့်မရပါ: ' + (error || 'Database error'), 'error');
+          showToast('Failed to add: ' + (error || 'Database error'), 'error');
         }
       }
     } catch (error: any) {
@@ -350,9 +363,9 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
     if (success) {
       // Optimistic Update
       setTransactions(prev => prev.filter(t => t.id !== selectedTransaction.id));
-      showToast('စာရင်း ဖျက်ပြီးပါပြီ', 'success');
+      showToast(language === 'my' ? 'စာရင်း ဖျက်ပြီးပါပြီ' : 'Transaction deleted', 'success');
     } else {
-      showToast('ဖျက်မရပါ: ' + (error || 'Unknown error'), 'error');
+      showToast('Delete failed: ' + (error || 'Unknown error'), 'error');
     }
     setSelectedTransaction(null);
     setShowDeleteConfirm(false);
@@ -360,7 +373,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
 
   const handleLogout = async () => {
     setShowLogoutConfirm(false);
-    showToast('အကောင့်မှ ထွက်လိုက်ပါပြီ', 'success');
+    showToast(language === 'my' ? 'အကောင့်မှ ထွက်လိုက်ပါပြီ' : 'Logged out', 'success');
     // Delay slightly to show the toast
     setTimeout(async () => {
         await logoutUser();
@@ -382,7 +395,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
     link.click();
     document.body.removeChild(link);
     setShowExportConfirm(false);
-    showToast("CSV ဒေါင်းလုဒ်လုပ်ပြီးပါပြီ");
+    showToast(language === 'my' ? "CSV ဒေါင်းလုဒ်လုပ်ပြီးပါပြီ" : "CSV Downloaded");
   };
 
   const handleSort = (key: SortKey) => {
@@ -447,9 +460,11 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
   const overSpentAmount = monthlyStats.expense - budgetLimit;
 
   // Search Categories
+  const expenseCats = getExpenseCategories();
+  const incomeCats = getIncomeCategories();
   const allSearchCategories = useMemo(() => {
-      return Array.from(new Set([...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES].map(c => c.label)));
-  }, []);
+      return Array.from(new Set([...expenseCats, ...incomeCats].map(c => c.label)));
+  }, [language]);
 
   const chartData = useMemo(() => {
     const data: Record<string, { name: string, income: number, expense: number }> = {};
@@ -500,6 +515,8 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
   const formatDateDisplay = (dateStr: string) => {
     if (!dateStr) return '';
     const parts = dateStr.split('-');
+    // JP Format: YYYY/MM/DD or similar, others DD/MM/YYYY
+    if (language === 'ja') return `${parts[0]}/${parts[1]}/${parts[2]}`;
     if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
     return dateStr;
   };
@@ -507,14 +524,22 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
   const getBurmeseMonthName = (dateStr: string) => {
     const [year, month] = dateStr.split('-');
     const monthIndex = parseInt(month) - 1;
-    const months = ["ဇန်နဝါရီ", "ဖေဖော်ဝါရီ", "မတ်", "ဧပြီ", "မေ", "ဇွန်", "ဇူလိုင်", "သြဂုတ်", "စက်တင်ဘာ", "အောက်တိုဘာ", "နိုဝင်ဘာ", "ဒီဇင်ဘာ"];
-    return `${year} ${months[monthIndex]}လ`;
+    
+    if (language === 'my') {
+        const months = ["ဇန်နဝါရီ", "ဖေဖော်ဝါရီ", "မတ်", "ဧပြီ", "မေ", "ဇွန်", "ဇူလိုင်", "သြဂုတ်", "စက်တင်ဘာ", "အောက်တိုဘာ", "နိုဝင်ဘာ", "ဒီဇင်ဘာ"];
+        return `${year} ${months[monthIndex]}လ`;
+    } else if (language === 'ja') {
+        return `${year}年 ${parseInt(month)}月`;
+    } else {
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        return `${months[monthIndex]} ${year}`;
+    }
   };
 
   const isCurrentMonth = filterDate === currentMonth;
 
   // Determine current categories based on selected transaction type
-  const currentCategories = type === TransactionType.INCOME ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+  const currentCategories = type === TransactionType.INCOME ? incomeCats : expenseCats;
 
   if (isLoading && transactions.length === 0) {
     return (
@@ -544,8 +569,8 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                 <Wallet className="text-primary" size={24} />
             </div>
             <div>
-                <h1 className="text-xl font-bold text-white leading-tight">MoneyNote</h1>
-                <p className="text-[10px] text-dark-muted">Smart Finance Tracker</p>
+                <h1 className="text-xl font-bold text-white leading-tight">{t.appName}</h1>
+                <p className="text-[10px] text-dark-muted">{t.appDesc}</p>
             </div>
           </div>
           <div className="flex gap-2 items-center">
@@ -571,7 +596,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                         {/* Currency Section */}
                         <div className="p-4 border-b border-dark-border bg-slate-800/80">
                             <div className="flex items-center gap-2 text-dark-muted mb-3 font-bold text-xs uppercase tracking-wider">
-                                <Globe size={14} /> Change Currency
+                                <Globe size={14} /> {t.changeCurrency}
                             </div>
                             <div className="grid grid-cols-2 gap-2">
                                 {CURRENCIES.map(c => (
@@ -587,17 +612,35 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                             </div>
                         </div>
 
+                        {/* Language Section */}
+                        <div className="p-4 border-b border-dark-border bg-slate-800/80">
+                            <div className="flex items-center gap-2 text-dark-muted mb-3 font-bold text-xs uppercase tracking-wider">
+                                <Languages size={14} /> {t.changeLanguage}
+                            </div>
+                            <div className="grid grid-cols-3 gap-2">
+                                {LANGUAGES.map(l => (
+                                    <button 
+                                      key={l.code} 
+                                      onClick={() => { setLanguage(l.code as Language); setShowSettingsMenu(false); }}
+                                      className={`text-xs font-bold py-2 px-2 rounded-lg border transition flex items-center justify-center ${language === l.code ? 'bg-primary text-slate-900 border-primary shadow-lg shadow-emerald-500/20' : 'bg-slate-700/50 text-slate-300 border-slate-600 hover:bg-slate-700 hover:text-white'}`}
+                                    >
+                                       <span>{l.label}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
                         {/* Actions Section */}
                         <div className="p-2 space-y-1 bg-slate-800">
                             <button onClick={() => {setShowSupportModal(true); setShowSettingsMenu(false);}} className="w-full text-left px-4 py-3 text-sm text-slate-300 hover:text-white hover:bg-slate-700 rounded-xl transition flex items-center gap-3">
-                                <HelpCircle size={18} className="text-blue-400" /> Feedback
+                                <HelpCircle size={18} className="text-blue-400" /> {t.feedback}
                             </button>
                             <button onClick={() => {setShowExportConfirm(true); setShowSettingsMenu(false);}} className="w-full text-left px-4 py-3 text-sm text-slate-300 hover:text-white hover:bg-slate-700 rounded-xl transition flex items-center gap-3">
-                                <Download size={18} className="text-emerald-400" /> Export CSV
+                                <Download size={18} className="text-emerald-400" /> {t.export}
                             </button>
                             <div className="h-px bg-dark-border mx-2 my-1"></div>
                             <button onClick={() => {setShowLogoutConfirm(true); setShowSettingsMenu(false);}} className="w-full text-left px-4 py-3 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition flex items-center gap-3 font-bold">
-                                <LogOut size={18} /> Logout
+                                <LogOut size={18} /> {t.logout}
                             </button>
                         </div>
                     </div>
@@ -612,22 +655,22 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
         
         {/* User Welcome */}
         <div className="flex items-center justify-between text-xs text-dark-muted px-1">
-            <span>မင်္ဂလာပါ, <b className="text-white">{currentUser}</b></span>
+            <span>{t.welcome}, <b className="text-white">{currentUser}</b></span>
             <span>{getLocalDate()}</span>
         </div>
 
         {/* Monthly Stats Summary */}
         <div className="grid grid-cols-3 gap-2 sm:gap-4">
              <div className="bg-dark-card p-3 rounded-xl border border-dark-border flex flex-col items-center justify-center shadow-sm">
-                 <span className="text-xs text-dark-muted mb-1">ဝင်ငွေ</span>
+                 <span className="text-xs text-dark-muted mb-1">{t.income}</span>
                  <span className="text-emerald-400 font-bold text-sm sm:text-lg">+{monthlyStats.income.toLocaleString()}</span>
              </div>
              <div className="bg-dark-card p-3 rounded-xl border border-dark-border flex flex-col items-center justify-center shadow-sm">
-                 <span className="text-xs text-dark-muted mb-1">ထွက်ငွေ</span>
+                 <span className="text-xs text-dark-muted mb-1">{t.expense}</span>
                  <span className="text-red-400 font-bold text-sm sm:text-lg">-{monthlyStats.expense.toLocaleString()}</span>
              </div>
              <div className="bg-dark-card p-3 rounded-xl border border-dark-border flex flex-col items-center justify-center shadow-sm">
-                 <span className="text-xs text-dark-muted mb-1">လလက်ကျန်</span>
+                 <span className="text-xs text-dark-muted mb-1">{t.balance}</span>
                  <span className={`font-bold text-sm sm:text-lg ${monthlyStats.net >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                     {monthlyStats.net > 0 ? '+' : ''}{monthlyStats.net.toLocaleString()}
                  </span>
@@ -638,7 +681,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
         <div className="bg-dark-card rounded-xl p-4 border border-dark-border relative overflow-hidden group">
             <div className="flex justify-between items-center mb-3">
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                   <PieChart size={16} className="text-primary"/> လစဉ် သုံးငွေလျာထားချက် (Budget)
+                   <PieChart size={16} className="text-primary"/> {t.budgetTitle}
                 </h3>
                 
                 {/* Only show settings if budget is set */}
@@ -659,15 +702,15 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                         className="bg-slate-700/50 hover:bg-slate-700 border border-dashed border-slate-500 text-emerald-400 font-bold py-3 px-6 rounded-xl transition w-full flex flex-col items-center justify-center gap-2 group-hover:border-emerald-500/50"
                     >
                         <Target size={24} className="mb-1 text-emerald-500" />
-                        <span>🎯 လစဉ်သုံးငွေ လျာထားချက် သတ်မှတ်မည်</span>
-                        <span className="text-[10px] text-dark-muted font-normal">ချွေတာလိုသော ပမာဏကို သတ်မှတ်ပြီး စီမံပါ</span>
+                        <span>🎯 {t.setBudget}</span>
+                        <span className="text-[10px] text-dark-muted font-normal">{t.setBudgetDesc}</span>
                     </button>
                 </div>
             ) : (
                 <>
                     <div className="flex justify-between text-xs text-dark-muted mb-1.5">
-                        <span className="font-medium text-white">သုံးစွဲမှု: {monthlyStats.expense.toLocaleString()}</span>
-                        <span>လျာထားချက်: {budgetLimit.toLocaleString()}</span>
+                        <span className="font-medium text-white">{t.spent}: {monthlyStats.expense.toLocaleString()}</span>
+                        <span>{t.limit}: {budgetLimit.toLocaleString()}</span>
                     </div>
                     <div className="space-y-3 mt-1">
                         <div className="w-full bg-slate-700 rounded-full h-3 overflow-hidden relative">
@@ -682,9 +725,9 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                             <div className="flex items-start gap-2 text-xs text-red-200 bg-red-900/30 p-2.5 rounded-lg border border-red-500/30 animate-in fade-in">
                                 <AlertTriangle size={16} className="text-red-500 shrink-0 mt-0.5" />
                                 <div>
-                                    <span className="font-bold text-red-400 block mb-0.5">အန္တရာယ်အဆင့် ရောက်ရှိနေပါသည် ({dangerPercent}%)</span>
+                                    <span className="font-bold text-red-400 block mb-0.5">{t.dangerState} ({dangerPercent}%)</span>
                                     {monthlyStats.expense > budgetLimit && (
-                                       <span>လျာထားချက်ထက် <b className="text-white">{overSpentAmount.toLocaleString()} {currency}</b> ပိုသုံးမိနေပါပြီ။</span>
+                                       <span>{t.overBudgetMsg} <b className="text-white">{overSpentAmount.toLocaleString()} {currency}</b></span>
                                     )}
                                 </div>
                             </div>
@@ -692,13 +735,13 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                             <div className="flex items-start gap-2 text-xs text-yellow-200 bg-yellow-900/30 p-2.5 rounded-lg border border-yellow-500/30 animate-in fade-in">
                                 <AlertCircle size={16} className="text-yellow-500 shrink-0 mt-0.5" />
                                 <div>
-                                    <span className="font-bold text-yellow-400 block mb-0.5">သတိပြုရန် ({warningPercent}%)</span>
-                                    <span>လျာထားချက်၏ {warningPercent}% ကျော်နေပါပြီ။ ချွေတာပါ။</span>
+                                    <span className="font-bold text-yellow-400 block mb-0.5">{t.warning} ({warningPercent}%)</span>
+                                    <span>{t.warningDesc}</span>
                                 </div>
                             </div>
                         ) : (
                              <div className="flex items-center gap-2 text-[10px] text-emerald-400 bg-emerald-900/10 px-2 py-1 rounded border border-emerald-500/10 w-fit">
-                                <CheckCircle2 size={12}/> ပုံမှန်အခြေအနေတွင် ရှိနေပါသည်။
+                                <CheckCircle2 size={12}/> {t.normalState}
                              </div>
                         )}
                     </div>
@@ -711,9 +754,9 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
           <div className="p-4 border-b border-dark-border bg-slate-800/50 space-y-3">
             <div className="flex justify-between items-center">
               <h3 className="font-bold text-gray-200">
-                {getBurmeseMonthName(filterDate)} ငွေစာရင်း
+                {getBurmeseMonthName(filterDate)}
               </h3>
-              <span className="text-xs text-dark-muted bg-slate-700 px-2 py-1 rounded border border-dark-border">{filteredAndSortedTransactions.length} ခု</span>
+              <span className="text-xs text-dark-muted bg-slate-700 px-2 py-1 rounded border border-dark-border">{filteredAndSortedTransactions.length} {t.items}</span>
             </div>
             
             {/* Search Input & Category Filters */}
@@ -724,7 +767,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                      </div>
                      <input 
                          type="text" 
-                         placeholder="အမျိုးအစား သို့မဟုတ် ပမာဏဖြင့် ရှာရန်..." 
+                         placeholder={t.searchPlaceholder}
                          value={searchQuery}
                          onFocus={() => setIsSearchFocused(true)}
                          onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
@@ -745,7 +788,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                  {(isSearchFocused || searchQuery) && (
                      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide no-scrollbar animate-in fade-in slide-in-from-top-2">
                         <div className="flex items-center gap-1 text-dark-muted text-[10px] uppercase font-bold shrink-0">
-                            <Filter size={10} /> Filters:
+                            <Filter size={10} /> {t.filters}
                         </div>
                         {allSearchCategories.map(cat => (
                             <button
@@ -768,13 +811,13 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
               <thead className="bg-slate-800 text-dark-muted font-medium border-b border-dark-border">
                 <tr>
                   <th onClick={() => handleSort('date')} className="px-4 py-3 cursor-pointer hover:bg-slate-700/50 transition w-1/4">
-                    <div className="flex items-center">ရက်စွဲ {getSortIcon('date')}</div>
+                    <div className="flex items-center">{t.date} {getSortIcon('date')}</div>
                   </th>
                   <th onClick={() => handleSort('label')} className="px-4 py-3 cursor-pointer hover:bg-slate-700/50 transition w-2/4">
-                    <div className="flex items-center">အကြောင်းအရာ {getSortIcon('label')}</div>
+                    <div className="flex items-center">{t.label} {getSortIcon('label')}</div>
                   </th>
                   <th onClick={() => handleSort('amount')} className="px-4 py-3 text-right cursor-pointer hover:bg-slate-700/50 transition w-1/4">
-                     <div className="flex items-center justify-end">ပမာဏ {getSortIcon('amount')}</div>
+                     <div className="flex items-center justify-end">{t.amount} {getSortIcon('amount')}</div>
                   </th>
                 </tr>
               </thead>
@@ -782,7 +825,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                 {filteredAndSortedTransactions.length === 0 ? (
                   <tr>
                     <td colSpan={3} className="px-4 py-8 text-center text-dark-muted italic">
-                      စာရင်းမရှိသေးပါ
+                      {t.noData}
                     </td>
                   </tr>
                 ) : (
@@ -805,7 +848,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
         {transactions.length > 0 && (
           <div className="bg-dark-card rounded-xl p-4 border border-dark-border overflow-hidden">
              <div className="flex justify-between items-center mb-4">
-                 <h3 className="text-sm font-bold text-white">နေ့စဉ် ငွေဝင်/ထွက် နှိုင်းယှဉ်ချက်</h3>
+                 <h3 className="text-sm font-bold text-white">{t.chartTitle}</h3>
                  <div className="flex bg-slate-800 rounded-lg p-1 gap-1">
                      <button onClick={() => setChartType('bar')} className={`p-1.5 rounded ${chartType === 'bar' ? 'bg-slate-600 text-white' : 'text-dark-muted hover:text-white'}`}><BarChart3 size={16}/></button>
                      <button onClick={() => setChartType('line')} className={`p-1.5 rounded ${chartType === 'line' ? 'bg-slate-600 text-white' : 'text-dark-muted hover:text-white'}`}><LineChartIcon size={16}/></button>
@@ -820,8 +863,8 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                             <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} />
                             <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#f1f5f9' }} />
                             <Legend />
-                            <Bar dataKey="income" name="ဝင်ငွေ" fill="#10b981" radius={[4, 4, 0, 0]} />
-                            <Bar dataKey="expense" name="ထွက်ငွေ" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="income" name={t.income} fill="#10b981" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="expense" name={t.expense} fill="#ef4444" radius={[4, 4, 0, 0]} />
                         </BarChart>
                     ) : chartType === 'line' ? (
                         <LineChart data={chartData}>
@@ -830,8 +873,8 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                             <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} />
                             <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#f1f5f9' }} />
                             <Legend />
-                            <Line type="monotone" dataKey="income" name="ဝင်ငွေ" stroke="#10b981" strokeWidth={2} dot={false} />
-                            <Line type="monotone" dataKey="expense" name="ထွက်ငွေ" stroke="#ef4444" strokeWidth={2} dot={false} />
+                            <Line type="monotone" dataKey="income" name={t.income} stroke="#10b981" strokeWidth={2} dot={false} />
+                            <Line type="monotone" dataKey="expense" name={t.expense} stroke="#ef4444" strokeWidth={2} dot={false} />
                         </LineChart>
                     ) : (
                         <AreaChart data={chartData}>
@@ -840,8 +883,8 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                             <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} />
                             <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#f1f5f9' }} />
                             <Legend />
-                            <Area type="monotone" dataKey="income" name="ဝင်ငွေ" stroke="#10b981" fill="#10b981" fillOpacity={0.2} />
-                            <Area type="monotone" dataKey="expense" name="ထွက်ငွေ" stroke="#ef4444" fill="#ef4444" fillOpacity={0.2} />
+                            <Area type="monotone" dataKey="income" name={t.income} stroke="#10b981" fill="#10b981" fillOpacity={0.2} />
+                            <Area type="monotone" dataKey="expense" name={t.expense} stroke="#ef4444" fill="#ef4444" fillOpacity={0.2} />
                         </AreaChart>
                     )}
                 </ResponsiveContainer>
@@ -852,15 +895,15 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
         {/* Home Button */}
         {!isCurrentMonth && (
             <button onClick={() => setFilterDate(currentMonth)} className="w-full py-3 rounded-xl border border-primary text-primary hover:bg-primary/10 transition flex items-center justify-center gap-2 font-bold">
-                <Home size={20} /> လက်ရှိလသို့ ပြန်သွားမည်
+                <Home size={20} /> {t.backToCurrent}
             </button>
         )}
 
         {/* History List */}
         <div className="space-y-3 pt-4 border-t border-dark-border">
-          <h3 className="text-dark-muted text-sm font-bold uppercase tracking-wider">လဟောင်း စာရင်းများ</h3>
+          <h3 className="text-dark-muted text-sm font-bold uppercase tracking-wider">{t.historyTitle}</h3>
           {historySummaries.length === 0 ? (
-             <p className="text-dark-muted text-sm">လဟောင်းစာရင်း မရှိသေးပါ</p>
+             <p className="text-dark-muted text-sm">{t.noHistory}</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {historySummaries.map(([monthKey, stats]) => (
@@ -886,7 +929,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
       {/* Footer */}
       <footer className="text-center py-8 mt-4 border-t border-dark-border bg-slate-900/50 text-dark-muted text-xs flex flex-col items-center justify-center gap-2">
          <div className="flex items-center gap-1 font-bold text-slate-500">
-             <Copyright size={12} /> {new Date().getFullYear()} MoneyNote. All rights reserved.
+             <Copyright size={12} /> {new Date().getFullYear()} {t.appName}. All rights reserved.
          </div>
          <div className="flex items-center gap-3 text-primary/80">
              <a href="mailto:bornaskraz@gmail.com" className="flex items-center gap-1 font-bold hover:underline hover:text-primary">
@@ -918,7 +961,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
           <div className="bg-slate-800 w-full max-w-lg rounded-2xl p-6 shadow-2xl animate-in zoom-in-95 duration-200 border border-slate-700 max-h-[85vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-bold text-white">
-                {editingId ? 'စာရင်း ပြင်ဆင်ရန်' : 'စာရင်းသစ် ထည့်ရန်'}
+                {editingId ? t.editTransaction : t.addTransaction}
               </h2>
               <button onClick={resetForm} className="text-dark-muted hover:text-white transition"><X size={24} /></button>
             </div>
@@ -933,7 +976,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                   }}
                   className={`py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center gap-2 ${type === TransactionType.EXPENSE ? 'bg-red-500 text-white shadow-lg' : 'text-dark-muted hover:text-white'}`}
                 >
-                  <ArrowDown size={16} /> ထွက်ငွေ
+                  <ArrowDown size={16} /> {t.expense}
                 </button>
                 <button
                   type="button"
@@ -943,12 +986,12 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                   }}
                   className={`py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center gap-2 ${type === TransactionType.INCOME ? 'bg-emerald-500 text-slate-900 shadow-lg' : 'text-dark-muted hover:text-white'}`}
                 >
-                  <ArrowUp size={16} /> ဝင်ငွေ
+                  <ArrowUp size={16} /> {t.income}
                 </button>
               </div>
 
               <div>
-                <label className="block text-dark-muted text-xs font-bold mb-1.5 uppercase tracking-wider">ပမာဏ ({currency})</label>
+                <label className="block text-dark-muted text-xs font-bold mb-1.5 uppercase tracking-wider">{t.amount} ({currency})</label>
                 <input
                   type="number"
                   inputMode="numeric"
@@ -961,13 +1004,13 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
               </div>
 
               <div>
-                <label className="block text-dark-muted text-xs font-bold mb-1.5 uppercase tracking-wider">အကြောင်းအရာ</label>
+                <label className="block text-dark-muted text-xs font-bold mb-1.5 uppercase tracking-wider">{t.label}</label>
                 <input
                   type="text"
                   value={label}
                   onChange={(e) => setLabel(e.target.value)}
                   className="w-full bg-slate-700 text-white px-4 py-3 rounded-xl border-2 border-transparent focus:border-primary focus:outline-none transition placeholder-slate-500 mb-2"
-                  placeholder={type === TransactionType.INCOME ? "ဥပမာ - လစာ" : "ဥပမာ - မနက်စာ"}
+                  placeholder={type === TransactionType.INCOME ? t.labelPlaceholderIncome : t.labelPlaceholderExpense}
                 />
                 
                 {/* Feature 2: Category Grid (Dynamic based on Type) */}
@@ -992,7 +1035,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                 disabled={isSaving || !amount || !label}
                 className="w-full bg-primary hover:bg-emerald-600 text-slate-900 font-bold py-4 rounded-xl shadow-lg shadow-emerald-900/20 transition disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2 mt-4"
               >
-                {isSaving ? <Loader2 className="animate-spin" /> : <>{editingId ? <Save size={20} /> : <Plus size={20} />} {editingId ? 'သိမ်းဆည်းမည်' : 'စာရင်းသွင်းမည်'}</>}
+                {isSaving ? <Loader2 className="animate-spin" /> : <>{editingId ? <Save size={20} /> : <Plus size={20} />} {editingId ? t.save : t.add}</>}
               </button>
             </form>
           </div>
@@ -1022,22 +1065,22 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                      <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-4 space-y-4 animate-in fade-in slide-in-from-bottom-2">
                          <div className="flex items-center gap-3 text-red-200">
                              <AlertCircle className="text-red-500 shrink-0" />
-                             <p className="font-bold text-sm">ဤစာရင်းကို ဖျက်ရန် သေချာပါသလား?</p>
+                             <p className="font-bold text-sm">{t.confirmDelete}</p>
                          </div>
                          <div className="flex gap-3">
-                             <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 py-2 rounded-lg bg-slate-700 text-white hover:bg-slate-600 font-bold text-sm transition">မဖျက်တော့ပါ</button>
-                             <button onClick={confirmDelete} className="flex-1 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 font-bold text-sm transition shadow-lg shadow-red-900/20">ဖျက်မည်</button>
+                             <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 py-2 rounded-lg bg-slate-700 text-white hover:bg-slate-600 font-bold text-sm transition">{t.cancel}</button>
+                             <button onClick={confirmDelete} className="flex-1 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 font-bold text-sm transition shadow-lg shadow-red-900/20">{t.delete}</button>
                          </div>
                      </div>
                 ) : (
                     <div className="grid grid-cols-2 gap-4">
                       <button onClick={handleEditClick} className="flex flex-col items-center justify-center gap-2 bg-slate-700 hover:bg-blue-600/20 hover:border-blue-500/50 border border-transparent p-4 rounded-xl transition group">
                         <div className="bg-blue-500/10 p-3 rounded-full group-hover:bg-blue-500 text-blue-400 group-hover:text-white transition"><Edit size={24} /></div>
-                        <span className="text-sm font-bold text-blue-100 group-hover:text-blue-400">ပြင်ဆင်မည်</span>
+                        <span className="text-sm font-bold text-blue-100 group-hover:text-blue-400">{t.edit}</span>
                       </button>
                       <button onClick={handleRequestDelete} className="flex flex-col items-center justify-center gap-2 bg-slate-700 hover:bg-red-600/20 hover:border-red-500/50 border border-transparent p-4 rounded-xl transition group">
                          <div className="bg-red-500/10 p-3 rounded-full group-hover:bg-red-500 text-red-400 group-hover:text-white transition"><Trash2 size={24} /></div>
-                        <span className="text-sm font-bold text-red-100 group-hover:text-red-400">ဖျက်မည်</span>
+                        <span className="text-sm font-bold text-red-100 group-hover:text-red-400">{t.delete}</span>
                       </button>
                     </div>
                 )
@@ -1045,7 +1088,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                 // Past Month (Read Only)
                 <div className="bg-slate-700/50 border border-dark-border rounded-xl p-4 flex items-center justify-center gap-3 text-dark-muted">
                     <Lock size={20} />
-                    <span className="text-sm font-medium">လဟောင်းစာရင်းများကို ပြင်ဆင်ခွင့် ပိတ်ထားပါသည်။</span>
+                    <span className="text-sm font-medium">{t.readOnly}</span>
                 </div>
             )}
           </div>
@@ -1061,19 +1104,19 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                         <div className="bg-primary/20 p-3 rounded-full">
                             <SlidersHorizontal className="text-primary" size={24} />
                         </div>
-                        <h3 className="text-lg font-bold text-white">Budget Settings</h3>
+                        <h3 className="text-lg font-bold text-white">{t.budgetSettingsTitle}</h3>
                    </div>
                    <button onClick={() => setShowBudgetModal(false)} className="text-dark-muted hover:text-white"><X size={20}/></button>
                </div>
                
                <p className="text-dark-muted text-sm border-b border-dark-border pb-3">
-                   လစဉ်သုံးငွေ လျာထားချက်နှင့် သတိပေးချက်များကို ချိန်ညှိပါ။
+                   {t.budgetSettingsDesc}
                </p>
 
                <div className="space-y-4 pt-1 h-64 overflow-y-auto pr-1">
                    {/* Budget Amount */}
                    <div>
-                       <label className="block text-xs font-bold text-white uppercase mb-2">လျာထားချက် ပမာဏ ({currency})</label>
+                       <label className="block text-xs font-bold text-white uppercase mb-2">{t.budgetAmount} ({currency})</label>
                        <input 
                           type="number" 
                           value={tempBudget} 
@@ -1086,7 +1129,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                    {/* Warning Threshold */}
                    <div>
                       <div className="flex justify-between text-xs font-bold mb-2">
-                          <label className="text-yellow-400 uppercase">Warning Alert</label>
+                          <label className="text-yellow-400 uppercase">{t.warningAlert}</label>
                           <span className="text-yellow-400">{tempWarning}%</span>
                       </div>
                       <input 
@@ -1099,14 +1142,14 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                         className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-yellow-400"
                       />
                       <p className="text-[10px] text-dark-muted mt-1">
-                          သုံးငွေ {tempWarning}% ကျော်လွန်ပါက အဝါရောင်ဖြင့် သတိပေးပါမည်။
+                          {t.warningMsg.replace('%s', tempWarning.toString())}
                       </p>
                    </div>
 
                    {/* Danger Threshold */}
                    <div>
                       <div className="flex justify-between text-xs font-bold mb-2">
-                          <label className="text-red-400 uppercase">Critical Alert</label>
+                          <label className="text-red-400 uppercase">{t.criticalAlert}</label>
                           <span className="text-red-400">{tempDanger}%</span>
                       </div>
                       <input 
@@ -1119,17 +1162,17 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                         className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-red-500"
                       />
                       <p className="text-[10px] text-dark-muted mt-1">
-                          သုံးငွေ {tempDanger}% ကျော်လွန်ပါက အနီရောင်ဖြင့် အန္တရာယ်ပြပါမည်။
+                          {t.criticalMsg.replace('%s', tempDanger.toString())}
                       </p>
                    </div>
                </div>
 
                <div className="flex gap-3 pt-3 border-t border-dark-border">
                    <button onClick={handleRemoveBudget} className="flex-1 py-3 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white font-bold text-sm transition border border-red-500/20">
-                       <Trash2 size={16} className="inline mr-1 mb-0.5" /> ဖျက်မည်
+                       <Trash2 size={16} className="inline mr-1 mb-0.5" /> {t.delete}
                    </button>
                    <button onClick={handleSaveBudget} className="flex-1 py-3 rounded-xl bg-primary text-slate-900 hover:bg-emerald-600 font-bold text-sm transition shadow-lg shadow-emerald-900/20">
-                       <Save size={16} className="inline mr-1 mb-0.5" /> သိမ်းမည်
+                       <Save size={16} className="inline mr-1 mb-0.5" /> {t.save}
                    </button>
                </div>
            </div>
@@ -1145,13 +1188,13 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                         <div className="bg-blue-500/10 p-3 rounded-full">
                             <HelpCircle className="text-blue-500" size={24} />
                         </div>
-                        <h3 className="text-lg font-bold text-white">Feedback & Support</h3>
+                        <h3 className="text-lg font-bold text-white">{t.feedback} & Support</h3>
                    </div>
                    <button onClick={() => setShowSupportModal(false)} className="text-dark-muted hover:text-white"><X size={20}/></button>
                </div>
                
                <p className="text-dark-muted text-sm">
-                   အကြံပြုချက်များ ပေးပို့ရန် သို့မဟုတ် အကူအညီလိုအပ်ပါက ဆက်သွယ်နိုင်ပါသည်။
+                   {language === 'my' ? 'အကြံပြုချက်များ ပေးပို့ရန် သို့မဟုတ် အကူအညီလိုအပ်ပါက ဆက်သွယ်နိုင်ပါသည်။' : 'Contact us for feedback or support.'}
                </p>
                
                <div className="space-y-3 pt-2">
@@ -1183,12 +1226,12 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                    <div className="bg-red-500/10 p-3 rounded-full">
                        <LogOut className="text-red-500" size={24} />
                    </div>
-                   <h3 className="text-lg font-bold text-white">အကောင့်ထွက်မည်</h3>
+                   <h3 className="text-lg font-bold text-white">{t.logout}</h3>
                </div>
-               <p className="text-dark-muted text-sm">အကောင့်မှ ထွက်ရန် သေချာပါသလား?</p>
+               <p className="text-dark-muted text-sm">{t.logoutConfirm}</p>
                <div className="flex gap-3 pt-2">
-                   <button onClick={() => setShowLogoutConfirm(false)} className="flex-1 py-2.5 rounded-xl bg-slate-700 text-white hover:bg-slate-600 font-bold text-sm transition">မထွက်တော့ပါ</button>
-                   <button onClick={handleLogout} className="flex-1 py-2.5 rounded-xl bg-red-600 text-white hover:bg-red-700 font-bold text-sm transition shadow-lg shadow-red-900/20">ထွက်မည်</button>
+                   <button onClick={() => setShowLogoutConfirm(false)} className="flex-1 py-2.5 rounded-xl bg-slate-700 text-white hover:bg-slate-600 font-bold text-sm transition">{t.cancel}</button>
+                   <button onClick={handleLogout} className="flex-1 py-2.5 rounded-xl bg-red-600 text-white hover:bg-red-700 font-bold text-sm transition shadow-lg shadow-red-900/20">{t.logout}</button>
                </div>
            </div>
         </div>
@@ -1202,12 +1245,12 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                    <div className="bg-emerald-500/10 p-3 rounded-full">
                        <Download className="text-emerald-500" size={24} />
                    </div>
-                   <h3 className="text-lg font-bold text-white">CSV Export</h3>
+                   <h3 className="text-lg font-bold text-white">{t.export}</h3>
                </div>
-               <p className="text-dark-muted text-sm">လက်ရှိစာရင်းများကို CSV ဖိုင်အနေဖြင့် ဒေါင်းလုဒ်ရယူမည်လား?</p>
+               <p className="text-dark-muted text-sm">{t.exportConfirm}</p>
                <div className="flex gap-3 pt-2">
-                   <button onClick={() => setShowExportConfirm(false)} className="flex-1 py-2.5 rounded-xl bg-slate-700 text-white hover:bg-slate-600 font-bold text-sm transition">မလုပ်တော့ပါ</button>
-                   <button onClick={handleExportCSV} className="flex-1 py-2.5 rounded-xl bg-emerald-600 text-slate-900 hover:bg-emerald-500 font-bold text-sm transition shadow-lg shadow-emerald-900/20">ရယူမည်</button>
+                   <button onClick={() => setShowExportConfirm(false)} className="flex-1 py-2.5 rounded-xl bg-slate-700 text-white hover:bg-slate-600 font-bold text-sm transition">{t.cancel}</button>
+                   <button onClick={handleExportCSV} className="flex-1 py-2.5 rounded-xl bg-emerald-600 text-slate-900 hover:bg-emerald-500 font-bold text-sm transition shadow-lg shadow-emerald-900/20">{t.get}</button>
                </div>
            </div>
         </div>

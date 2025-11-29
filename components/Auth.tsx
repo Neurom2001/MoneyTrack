@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { loginUser, registerUser } from '../services/storageService';
-import { Wallet, AlertTriangle, Eye, EyeOff, ShieldCheck, PieChart, TrendingUp, Heart, Copyright, Mail, Send, CheckCircle2, AlertCircle, User, Lock, ArrowRight } from 'lucide-react';
+import { Wallet, AlertTriangle, Eye, EyeOff, ShieldCheck, PieChart, TrendingUp, Heart, Copyright, Mail, Send, CheckCircle2, AlertCircle, User, Lock, ArrowRight, Languages } from 'lucide-react';
+import { TRANSLATIONS, Language } from '../utils/translations';
 
 interface AuthProps {
   onLogin: (username: string) => void;
@@ -14,14 +15,19 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
+  // Language State
+  const [language, setLanguage] = useState<Language>((localStorage.getItem('language') as Language) || 'my');
+  
   // Toast State
   const [toast, setToast] = useState<{msg: string, type: 'success' | 'error'} | null>(null);
 
+  const t = TRANSLATIONS[language];
+
   const features = [
-    { icon: <TrendingUp size={20} />, text: "ဝင်ငွေ/ထွက်ငွေ စာရင်းများကို လွယ်ကူစွာ မှတ်သားနိုင်ခြင်း" },
-    { icon: <PieChart size={20} />, text: "လစဉ် သုံးစွဲမှုများကို ဇယားများဖြင့် အသေးစိတ်ကြည့်ရှုနိုင်ခြင်း" },
-    { icon: <Wallet size={20} />, text: "လျာထားချက် (Budget) သတ်မှတ်၍ ငွေကြေးစီမံနိုင်ခြင်း" },
-    { icon: <ShieldCheck size={20} />, text: "လုံခြုံစိတ်ချရသော ကိုယ်ပိုင်အကောင့်စနစ်" },
+    { icon: <TrendingUp size={20} />, text: t.feat1 },
+    { icon: <PieChart size={20} />, text: t.feat2 },
+    { icon: <Wallet size={20} />, text: t.feat3 },
+    { icon: <ShieldCheck size={20} />, text: t.feat4 },
   ];
 
   const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
@@ -29,16 +35,23 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
     setTimeout(() => setToast(null), 5000); 
   };
 
+  useEffect(() => {
+    localStorage.setItem('language', language);
+  }, [language]);
+
   // Check for registration success flag on mount/view change
   useEffect(() => {
     if (isLoginView) {
       const regSuccess = localStorage.getItem('registrationSuccess');
       if (regSuccess === 'true') {
-        showToast('အကောင့်ဖွင့်ခြင်း အောင်မြင်ပါသည်။ ကျေးဇူးပြု၍ စကားဝှက်ဖြင့် ပြန်လည်ဝင်ရောက်ပါ။', 'success');
+        showToast(language === 'my' 
+            ? 'အကောင့်ဖွင့်ခြင်း အောင်မြင်ပါသည်။ ကျေးဇူးပြု၍ စကားဝှက်ဖြင့် ပြန်လည်ဝင်ရောက်ပါ။'
+            : 'Registration successful. Please login.', 
+            'success');
         localStorage.removeItem('registrationSuccess');
       }
     }
-  }, [isLoginView]);
+  }, [isLoginView, language]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,13 +59,13 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
     setIsLoading(true);
 
     if (!username || !password) {
-      setError('အသုံးပြုသူအမည်နှင့် စကားဝှက်ကို ဖြည့်သွင်းပါ။');
+      setError(language === 'my' ? 'အသုံးပြုသူအမည်နှင့် စကားဝှက်ကို ဖြည့်သွင်းပါ။' : 'Please fill in username and password.');
       setIsLoading(false);
       return;
     }
 
     if (!isLoginView && password.length < 6) {
-        setError('စကားဝှက်သည် အနည်းဆုံး ၆ လုံး ရှိရပါမည်။');
+        setError(language === 'my' ? 'စကားဝှက်သည် အနည်းဆုံး ၆ လုံး ရှိရပါမည်။' : 'Password must be at least 6 characters.');
         setIsLoading(false);
         return;
     }
@@ -61,13 +74,13 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
       if (isLoginView) {
         const result = await loginUser(username, password);
         if (result.success) {
-          showToast('ဝင်ရောက်ခြင်း အောင်မြင်ပါသည်', 'success');
+          showToast(language === 'my' ? 'ဝင်ရောက်ခြင်း အောင်မြင်ပါသည်' : 'Login successful', 'success');
           // Delay briefly so user sees the toast before switching views
           setTimeout(() => {
             onLogin(username);
           }, 1000);
         } else {
-          setError('အကောင့်ဝင်မရပါ (သို့) စကားဝှက်မှားယွင်းနေပါသည်။');
+          setError(language === 'my' ? 'အကောင့်ဝင်မရပါ (သို့) စကားဝှက်မှားယွင်းနေပါသည်။' : 'Login failed or invalid credentials.');
           setIsLoading(false);
         }
       } else {
@@ -81,7 +94,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
           setIsLoginView(true);
           setIsLoading(false);
         } else {
-          setError(result.error || 'အကောင့်ဖွင့်မရပါ။ ထပ်မံကြိုးစားကြည့်ပါ။');
+          setError(result.error || (language === 'my' ? 'အကောင့်ဖွင့်မရပါ။ ထပ်မံကြိုးစားကြည့်ပါ။' : 'Registration failed. Please try again.'));
           setIsLoading(false);
         }
       }
@@ -119,14 +132,19 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                     <Wallet className="text-slate-900 w-8 h-8 lg:w-10 lg:h-10" />
                 </div>
                 <div>
-                    <h1 className="text-2xl lg:text-4xl font-bold tracking-tight text-white">MoneyNote</h1>
-                    <p className="text-emerald-400 font-medium text-xs lg:text-base tracking-widest uppercase">Smart Finance Tracker</p>
+                    <h1 className="text-2xl lg:text-4xl font-bold tracking-tight text-white">{t.appName}</h1>
+                    <p className="text-emerald-400 font-medium text-xs lg:text-base tracking-widest uppercase">{t.appDesc}</p>
                 </div>
             </div>
 
-            <p className="text-slate-300 text-base lg:text-lg mb-8 leading-relaxed max-w-md lg:max-w-none">
-                သင့်ငွေကြေးစီမံခန့်ခွဲမှုအတွက် အကောင်းဆုံးလက်ထောက်။ <br className="hidden lg:block"/>
-                မြန်မာဘာသာဖြင့် အသုံးပြုရလွယ်ကူပြီး တိကျသေချာသော စာရင်းအင်းစနစ်။
+            <p className="text-slate-300 text-base lg:text-lg mb-8 leading-relaxed max-w-md lg:max-w-none hidden lg:block">
+                {language === 'my' ? (
+                  <>သင့်ငွေကြေးစီမံခန့်ခွဲမှုအတွက် အကောင်းဆုံးလက်ထောက်။ <br/>မြန်မာဘာသာဖြင့် အသုံးပြုရလွယ်ကူပြီး တိကျသေချာသော စာရင်းအင်းစနစ်။</>
+                ) : language === 'ja' ? (
+                  <>あなたの家計管理のための最高のパートナー。<br/>使いやすく、正確な財務追跡システム。</>
+                ) : (
+                  <>Your best assistant for financial management. <br/>Easy to use and accurate tracking system.</>
+                )}
             </p>
 
             <div className="space-y-5 mb-8 w-full max-w-sm lg:max-w-none">
@@ -141,7 +159,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
             {/* Footer matching Dashboard style */}
             <div className="mt-8 lg:mt-12 text-center lg:text-left flex flex-col items-center lg:items-start gap-1 w-full pt-6 border-t border-slate-800 lg:border-none">
                  <div className="flex items-center gap-1 font-bold text-slate-500 text-xs">
-                     <Copyright size={12} /> {new Date().getFullYear()} MoneyNote. All rights reserved.
+                     <Copyright size={12} /> {new Date().getFullYear()} {t.appName}. All rights reserved.
                  </div>
                  <div className="flex items-center gap-3 text-primary/80 text-xs">
                      <a href="mailto:bornaskraz@gmail.com" className="flex items-center gap-1 font-bold hover:underline hover:text-primary transition">
@@ -161,8 +179,24 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
 
       {/* Auth Form Section */}
       {/* Mobile: Order 1 (Top), Desktop: Order 2 (Right) */}
-      <div className="lg:w-1/2 p-6 lg:p-12 flex items-center justify-center bg-slate-800/30 flex-grow order-1 lg:order-2 min-h-[60vh] lg:min-h-auto backdrop-blur-sm">
-        <div className="w-full max-w-md space-y-6 lg:space-y-8 animate-in fade-in slide-in-from-right-8 duration-500">
+      <div className="lg:w-1/2 p-6 lg:p-12 flex items-center justify-center bg-slate-800/30 flex-grow order-1 lg:order-2 min-h-[60vh] lg:min-h-auto backdrop-blur-sm relative">
+        
+        {/* Language Selector */}
+        <div className="absolute top-6 right-6 z-20">
+            <div className="flex bg-slate-900 rounded-lg p-1 border border-slate-700">
+                {(['my', 'en', 'ja'] as Language[]).map(lang => (
+                    <button
+                        key={lang}
+                        onClick={() => setLanguage(lang)}
+                        className={`px-3 py-1 rounded text-xs font-bold transition ${language === lang ? 'bg-primary text-slate-900' : 'text-slate-400 hover:text-white'}`}
+                    >
+                        {lang === 'my' ? 'MM' : lang === 'en' ? 'EN' : 'JP'}
+                    </button>
+                ))}
+            </div>
+        </div>
+
+        <div className="w-full max-w-md space-y-6 lg:space-y-8 animate-in fade-in slide-in-from-right-8 duration-500 mt-8 lg:mt-0">
             
             {/* Mobile Only Header */}
             <div className="lg:hidden text-center mb-6">
@@ -170,16 +204,16 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                     <div className="bg-primary/20 p-2 rounded-lg">
                         <Wallet className="text-primary w-6 h-6" />
                     </div>
-                    <span className="text-xl font-bold text-white">MoneyNote</span>
+                    <span className="text-xl font-bold text-white">{t.appName}</span>
                  </div>
             </div>
 
             <div className="text-center lg:text-left">
                 <h2 className="text-2xl lg:text-3xl font-bold text-white mb-2">
-                    {isLoginView ? 'ကြိုဆိုပါတယ်' : 'အကောင့်သစ်စတင်ရန်'}
+                    {isLoginView ? t.loginTitle : t.registerTitle}
                 </h2>
                 <p className="text-slate-400 text-sm lg:text-base">
-                    {isLoginView ? 'သင့်ငွေကြေးများကို စီမံခန့်ခွဲရန် ဝင်ရောက်ပါ' : 'မိနစ်ပိုင်းအတွင်း အကောင့်ဖွင့်ပြီး စတင်လိုက်ပါ'}
+                    {isLoginView ? t.loginSubtitle : t.registerSubtitle}
                 </p>
             </div>
 
@@ -187,9 +221,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
             <div className="bg-amber-900/20 border border-amber-600/30 rounded-xl p-4 flex gap-3 items-start text-left shadow-sm">
                 <AlertTriangle className="text-amber-500 shrink-0 mt-0.5" size={20} />
                 <div className="text-xs lg:text-sm text-amber-200/80 leading-relaxed">
-                    <strong>သတိပြုရန်:</strong> ဤစနစ်သည် အီးမေးလ်မလိုဘဲ အသုံးပြုနိုင်သော်လည်း၊ 
-                    <span className="text-amber-200 font-bold underline decoration-amber-500 mx-1">စကားဝှက်မေ့သွားပါက ပြန်ယူ၍ မရနိုင်ပါ။</span> 
-                    ထို့ကြောင့် User Name နှင့် Password ကို သေချာစွာ မှတ်သားထားပါ။
+                    <strong>{t.warningTitle}</strong> {t.warningText}
                 </div>
             </div>
 
@@ -202,7 +234,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
             <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
                     <label className="block text-slate-300 text-xs font-bold uppercase tracking-wider mb-2">
-                        အသုံးပြုသူအမည် (User Name)
+                        {t.username}
                     </label>
                     <div className="relative group">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -213,7 +245,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             className="w-full pl-10 pr-4 py-3.5 bg-slate-900 border border-slate-700 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition placeholder-slate-600 shadow-sm"
-                            placeholder="ဥပမာ - mgmg"
+                            placeholder={t.usernamePlaceholder}
                             disabled={isLoading}
                             autoComplete="username"
                         />
@@ -222,7 +254,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                 
                 <div>
                     <label className="block text-slate-300 text-xs font-bold uppercase tracking-wider mb-2">
-                        စကားဝှက် (Password)
+                        {t.password}
                     </label>
                     <div className="relative group">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -233,7 +265,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className="w-full pl-10 pr-12 py-3.5 bg-slate-900 border border-slate-700 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition placeholder-slate-600 shadow-sm"
-                            placeholder="အနည်းဆုံး ၆ လုံး"
+                            placeholder={t.passwordPlaceholder}
                             disabled={isLoading}
                             autoComplete={isLoginView ? "current-password" : "new-password"}
                         />
@@ -256,7 +288,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                         <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                     ) : (
                         <>
-                            {isLoginView ? 'ဝင်ရောက်မည်' : 'စာရင်းသွင်းမည်'}
+                            {isLoginView ? t.loginBtn : t.registerBtn}
                             <ArrowRight size={20} className="group-hover:translate-x-1 transition" />
                         </>
                     )}
@@ -265,7 +297,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
 
             <div className="text-center pt-6 border-t border-slate-700/50">
                 <p className="text-slate-400 text-sm mb-2">
-                    {isLoginView ? 'အကောင့်မရှိသေးဘူးလား?' : 'အကောင့်ရှိပြီးသားလား?'}
+                    {isLoginView ? t.noAccount : t.hasAccount}
                 </p>
                 <button
                     onClick={() => {
@@ -277,8 +309,8 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                     className="text-primary hover:text-emerald-300 font-bold transition flex items-center justify-center gap-1 mx-auto hover:underline decoration-2 underline-offset-4"
                 >
                     {isLoginView 
-                    ? 'အကောင့်သစ် ဖွင့်ပါ' 
-                    : 'အကောင့်သို့ ဝင်ရောက်ပါ'}
+                    ? t.createAccount 
+                    : t.signIn}
                 </button>
             </div>
         </div>
