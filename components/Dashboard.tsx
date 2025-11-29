@@ -172,8 +172,8 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
           };
           const { success, error } = await updateTransaction(updatedPayload);
           if (success) {
-            // Realtime will handle the update, but optimistic UI update is fine too
-            // setTransactions(prev => prev.map(t => t.id === editingId ? updatedPayload : t));
+            // Optimistic Update
+            setTransactions(prev => prev.map(t => t.id === editingId ? updatedPayload : t));
             showToast('စာရင်း ပြင်ဆင်ပြီးပါပြီ', 'success');
           } else {
             showToast('ပြင်ဆင်မရပါ: ' + (error || 'Unknown error'), 'error');
@@ -189,8 +189,8 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
         };
         const { data, error } = await saveTransaction(newTransactionPayload);
         if (data) {
-          // Realtime will handle the update
-          // setTransactions(prev => [...prev, data]);
+          // Optimistic Update
+          setTransactions(prev => [...prev, data]);
           showToast('စာရင်းသစ် ထည့်ပြီးပါပြီ', 'success');
         } else {
           showToast('စာရင်းထည့်မရပါ: ' + (error || 'Database error'), 'error');
@@ -233,8 +233,8 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
     if (!selectedTransaction) return;
     const { success, error } = await deleteTransaction(selectedTransaction.id);
     if (success) {
-      // Realtime will handle removal
-      // setTransactions(prev => prev.filter(t => t.id !== selectedTransaction.id));
+      // Optimistic Update
+      setTransactions(prev => prev.filter(t => t.id !== selectedTransaction.id));
       showToast('စာရင်း ဖျက်ပြီးပါပြီ', 'success');
     } else {
       showToast('ဖျက်မရပါ: ' + (error || 'Unknown error'), 'error');
@@ -553,8 +553,16 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                          placeholder="အမျိုးအစား သို့မဟုတ် ပမာဏဖြင့် ရှာရန်..." 
                          value={searchQuery}
                          onChange={(e) => setSearchQuery(e.target.value)}
-                         className="w-full bg-slate-900 border border-dark-border text-white text-sm rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:border-primary transition"
+                         className="w-full bg-slate-900 border border-dark-border text-white text-sm rounded-lg pl-10 pr-10 py-2 focus:outline-none focus:border-primary transition"
                      />
+                     {searchQuery && (
+                        <button 
+                            onClick={() => setSearchQuery('')}
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-dark-muted hover:text-white"
+                        >
+                            <X size={16} />
+                        </button>
+                     )}
                  </div>
                  
                  {/* Category Chips */}
@@ -565,17 +573,13 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                     {allSearchCategories.map(cat => (
                         <button
                           key={cat}
-                          onClick={() => setSearchQuery(cat)}
-                          className={`px-3 py-1 rounded-full text-[11px] font-medium whitespace-nowrap border transition ${searchQuery === cat ? 'bg-primary text-slate-900 border-primary shadow-sm shadow-emerald-500/20' : 'bg-slate-800 text-dark-muted border-slate-700 hover:border-slate-500 hover:text-white'}`}
+                          onClick={() => setSearchQuery(prev => prev === cat ? '' : cat)}
+                          className={`px-3 py-1 rounded-full text-[11px] font-medium whitespace-nowrap border transition flex items-center gap-1 ${searchQuery === cat ? 'bg-primary text-slate-900 border-primary shadow-sm shadow-emerald-500/20' : 'bg-slate-800 text-dark-muted border-slate-700 hover:border-slate-500 hover:text-white'}`}
                         >
                           {cat}
+                          {searchQuery === cat && <X size={12} className="opacity-75"/>}
                         </button>
                     ))}
-                    {searchQuery && (
-                        <button onClick={() => setSearchQuery('')} className="px-3 py-1 rounded-full text-[11px] font-medium whitespace-nowrap bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 flex items-center gap-1">
-                           <X size={10} /> Clear
-                        </button>
-                    )}
                  </div>
             </div>
           </div>
