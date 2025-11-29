@@ -673,16 +673,20 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
         <div className="grid grid-cols-3 gap-2 sm:gap-4">
              <div className="bg-dark-card p-4 rounded-xl border border-dark-border flex flex-col items-center justify-center shadow-sm">
                  <span className="text-sm text-dark-muted mb-1">{t.income}</span>
-                 <span className="text-emerald-400 font-bold text-base sm:text-xl">+{monthlyStats.income.toLocaleString()}</span>
+                 <span className="text-emerald-400 font-bold text-base sm:text-xl">
+                    +{monthlyStats.income.toLocaleString()} <span className="text-sm font-medium text-emerald-400/80">{currency}</span>
+                 </span>
              </div>
              <div className="bg-dark-card p-4 rounded-xl border border-dark-border flex flex-col items-center justify-center shadow-sm">
                  <span className="text-sm text-dark-muted mb-1">{t.expense}</span>
-                 <span className="text-red-400 font-bold text-base sm:text-xl">-{monthlyStats.expense.toLocaleString()}</span>
+                 <span className="text-red-400 font-bold text-base sm:text-xl">
+                    -{monthlyStats.expense.toLocaleString()} <span className="text-sm font-medium text-red-400/80">{currency}</span>
+                 </span>
              </div>
              <div className="bg-dark-card p-4 rounded-xl border border-dark-border flex flex-col items-center justify-center shadow-sm">
                  <span className="text-sm text-dark-muted mb-1">{t.balance}</span>
                  <span className={`font-bold text-base sm:text-xl ${monthlyStats.net >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                    {monthlyStats.net > 0 ? '+' : ''}{monthlyStats.net.toLocaleString()}
+                    {monthlyStats.net > 0 ? '+' : ''}{monthlyStats.net.toLocaleString()} <span className="text-sm font-medium opacity-80">{currency}</span>
                  </span>
              </div>
         </div>
@@ -719,8 +723,8 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
             ) : (
                 <>
                     <div className="flex justify-between text-sm text-dark-muted mb-2">
-                        <span className="font-medium text-white">{t.spent}: {monthlyStats.expense.toLocaleString()}</span>
-                        <span>{t.limit}: {budgetLimit.toLocaleString()}</span>
+                        <span className="font-medium text-white">{t.spent}: {monthlyStats.expense.toLocaleString()} {currency}</span>
+                        <span>{t.limit}: {budgetLimit.toLocaleString()} {currency}</span>
                     </div>
                     <div className="space-y-3 mt-1">
                         <div className="w-full bg-slate-700 rounded-full h-4 overflow-hidden relative">
@@ -844,7 +848,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                       <td className="px-4 py-4 whitespace-nowrap text-dark-muted text-sm sm:text-base">{formatDateDisplay(t.date)}</td>
                       <td className="px-4 py-4 font-medium text-white">{t.label}</td>
                       <td className={`px-4 py-4 text-right font-bold ${t.type === TransactionType.INCOME ? 'text-emerald-400' : 'text-red-400'}`}>
-                        {t.type === TransactionType.INCOME ? '+' : '-'}{t.amount.toLocaleString()}
+                        {t.type === TransactionType.INCOME ? '+' : '-'}{t.amount.toLocaleString()} <span className="text-xs font-medium opacity-70 ml-0.5">{currency}</span>
                       </td>
                     </tr>
                   ))
@@ -927,7 +931,9 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                 >
                   <div className="flex justify-between items-center mb-1">
                     <span className="font-bold text-white group-hover:text-primary transition text-base">{getBurmeseMonthName(monthKey)}</span>
-                    <span className={`text-sm font-bold ${stats.net >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{stats.net > 0 ? '+' : ''}{stats.net.toLocaleString()}</span>
+                    <span className={`text-sm font-bold ${stats.net >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                        {stats.net > 0 ? '+' : ''}{stats.net.toLocaleString()} <span className="text-xs ml-1 opacity-80">{currency}</span>
+                    </span>
                   </div>
                 </button>
               ))}
