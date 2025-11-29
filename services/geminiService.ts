@@ -1,6 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import { Transaction, TransactionType } from "../types";
 
+// Initialize the Google GenAI client with the API key from process.env
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const analyzeFinances = async (transactions: Transaction[]): Promise<string> => {
