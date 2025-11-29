@@ -1,0 +1,25 @@
+export enum TransactionType {
+  INCOME = 'INCOME',
+  EXPENSE = 'EXPENSE',
+}
+
+export interface Transaction {
+  id: string;
+  amount: number;
+  label: string;
+  date: string; // ISO String YYYY-MM-DD
+  type: TransactionType;
+  created_at?: string; // Optional because it comes from DB
+  user_id?: string; // Optional for client side
+}
+
+export interface User {
+  username: string;
+  password: string; // In a real app, this should be hashed. Storing plain for demo/local usage only.
+}
+
+export interface MonthlyStats {
+  totalIncome: number;
+  totalExpense: number;
+  balance: number;
+}
