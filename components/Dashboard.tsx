@@ -9,7 +9,7 @@ import {
   LogOut, Plus, Trash2, Home, Download, Loader2, ArrowUpDown, ArrowUp, ArrowDown, 
   X, Edit, Save, CheckCircle2, AlertCircle, Search, PieChart, BarChart3, LineChart as LineChartIcon,
   Utensils, Bus, ShoppingBag, Stethoscope, Zap, Gift, Smartphone, Briefcase, GraduationCap, CircleDollarSign,
-  Banknote, TrendingUp, Wallet, ArrowLeftRight, Heart, Copyright, Filter, Lock, HelpCircle, Mail, Send, Settings, Target, AlertTriangle
+  Banknote, TrendingUp, Wallet, ArrowLeftRight, Heart, Copyright, Filter, Lock, HelpCircle, Mail, Send, Settings, Target, AlertTriangle, Globe, SlidersHorizontal, Check
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
@@ -47,6 +47,13 @@ const INCOME_CATEGORIES = [
   { label: 'မုန့်ဖိုး', icon: <Wallet size={20} /> },
   { label: 'ပြန်ရငွေ', icon: <ArrowLeftRight size={20} /> },
   { label: 'အထွေထွေ', icon: <CircleDollarSign size={20} /> },
+];
+
+const CURRENCIES = [
+  { id: 'MMK', label: 'MMK', symbol: 'ကျပ်' },
+  { id: 'USD', label: 'USD', symbol: '$' },
+  { id: 'THB', label: 'THB', symbol: '฿' },
+  { id: 'SGD', label: 'SGD', symbol: 'S$' },
 ];
 
 const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
@@ -90,6 +97,10 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
   const [tempBudget, setTempBudget] = useState('');
   const [tempWarning, setTempWarning] = useState(80);
   const [tempDanger, setTempDanger] = useState(100);
+
+  // Settings & Currency
+  const [currency, setCurrency] = useState(localStorage.getItem('currency') || 'ကျပ်');
+  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
 
   // Selection & Editing
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
@@ -153,6 +164,10 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
+
+  useEffect(() => {
+    localStorage.setItem('currency', currency);
+  }, [currency]);
 
   const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
     setToast({ msg, type });
@@ -533,21 +548,62 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                 <p className="text-[10px] text-dark-muted">Smart Finance Tracker</p>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
             {deferredPrompt && (
                 <button onClick={handleInstallClick} className="bg-primary/10 hover:bg-primary/20 text-primary transition text-xs sm:text-sm border border-primary/20 px-3 py-2 rounded-lg flex items-center gap-1 font-bold animate-pulse">
                     <Smartphone size={16} /> <span className="hidden sm:inline">Install App</span>
                 </button>
             )}
-            <button onClick={() => setShowSupportModal(true)} className="text-dark-muted hover:text-blue-400 transition text-xs sm:text-sm border border-dark-border px-3 py-2 rounded flex items-center gap-1">
-                <HelpCircle size={16} /> <span className="hidden sm:inline">Feedback</span>
-            </button>
-            <button onClick={() => setShowExportConfirm(true)} className="text-dark-muted hover:text-emerald-400 transition text-xs sm:text-sm border border-dark-border px-3 py-2 rounded flex items-center gap-1">
-                <Download size={16} /> <span className="hidden sm:inline">Export</span>
-            </button>
-            <button onClick={() => setShowLogoutConfirm(true)} className="bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white transition text-xs sm:text-sm border border-red-500/20 px-3 py-2 rounded-lg flex items-center gap-1 font-bold">
-                <LogOut size={16} /> <span className="hidden sm:inline">Logout</span>
-            </button>
+            
+            {/* Settings Dropdown */}
+            <div className="relative">
+                <button 
+                  onClick={() => setShowSettingsMenu(!showSettingsMenu)} 
+                  className="bg-slate-700/50 hover:bg-slate-700 text-white p-2.5 rounded-xl border border-dark-border transition flex items-center justify-center"
+                >
+                    <Settings size={20} />
+                </button>
+
+                {showSettingsMenu && (
+                    <>
+                    <div className="fixed inset-0 z-40" onClick={() => setShowSettingsMenu(false)}></div>
+                    <div className="absolute right-0 top-full mt-2 w-64 bg-slate-800 rounded-2xl shadow-2xl border border-dark-border z-50 overflow-hidden animate-in fade-in slide-in-from-top-2">
+                        {/* Currency Section */}
+                        <div className="p-4 border-b border-dark-border bg-slate-800/80">
+                            <div className="flex items-center gap-2 text-dark-muted mb-3 font-bold text-xs uppercase tracking-wider">
+                                <Globe size={14} /> Change Currency
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                                {CURRENCIES.map(c => (
+                                    <button 
+                                      key={c.id} 
+                                      onClick={() => { setCurrency(c.symbol); setShowSettingsMenu(false); }}
+                                      className={`text-xs font-bold py-2 px-3 rounded-lg border transition flex items-center justify-between ${currency === c.symbol ? 'bg-primary text-slate-900 border-primary shadow-lg shadow-emerald-500/20' : 'bg-slate-700/50 text-slate-300 border-slate-600 hover:bg-slate-700 hover:text-white'}`}
+                                    >
+                                       <span>{c.label}</span>
+                                       {currency === c.symbol && <Check size={12} strokeWidth={3} />}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Actions Section */}
+                        <div className="p-2 space-y-1 bg-slate-800">
+                            <button onClick={() => {setShowSupportModal(true); setShowSettingsMenu(false);}} className="w-full text-left px-4 py-3 text-sm text-slate-300 hover:text-white hover:bg-slate-700 rounded-xl transition flex items-center gap-3">
+                                <HelpCircle size={18} className="text-blue-400" /> Feedback
+                            </button>
+                            <button onClick={() => {setShowExportConfirm(true); setShowSettingsMenu(false);}} className="w-full text-left px-4 py-3 text-sm text-slate-300 hover:text-white hover:bg-slate-700 rounded-xl transition flex items-center gap-3">
+                                <Download size={18} className="text-emerald-400" /> Export CSV
+                            </button>
+                            <div className="h-px bg-dark-border mx-2 my-1"></div>
+                            <button onClick={() => {setShowLogoutConfirm(true); setShowSettingsMenu(false);}} className="w-full text-left px-4 py-3 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition flex items-center gap-3 font-bold">
+                                <LogOut size={18} /> Logout
+                            </button>
+                        </div>
+                    </div>
+                    </>
+                )}
+            </div>
           </div>
         </div>
       </header>
@@ -591,7 +647,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                     onClick={openBudgetModal}
                     className="text-dark-muted hover:text-white transition p-1.5 hover:bg-slate-700 rounded-lg"
                   >
-                      <Settings size={18} />
+                      <SlidersHorizontal size={18} />
                   </button>
                 )}
             </div>
@@ -628,7 +684,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                                 <div>
                                     <span className="font-bold text-red-400 block mb-0.5">အန္တရာယ်အဆင့် ရောက်ရှိနေပါသည် ({dangerPercent}%)</span>
                                     {monthlyStats.expense > budgetLimit && (
-                                       <span>လျာထားချက်ထက် <b className="text-white">{overSpentAmount.toLocaleString()} ကျပ်</b> ပိုသုံးမိနေပါပြီ။</span>
+                                       <span>လျာထားချက်ထက် <b className="text-white">{overSpentAmount.toLocaleString()} {currency}</b> ပိုသုံးမိနေပါပြီ။</span>
                                     )}
                                 </div>
                             </div>
@@ -892,7 +948,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
               </div>
 
               <div>
-                <label className="block text-dark-muted text-xs font-bold mb-1.5 uppercase tracking-wider">ပမာဏ (ကျပ်)</label>
+                <label className="block text-dark-muted text-xs font-bold mb-1.5 uppercase tracking-wider">ပမာဏ ({currency})</label>
                 <input
                   type="number"
                   inputMode="numeric"
@@ -956,7 +1012,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
             </div>
             <div className="text-3xl font-bold text-center py-2 bg-slate-900/50 rounded-xl">
               <span className={selectedTransaction.type === TransactionType.INCOME ? 'text-emerald-400' : 'text-red-400'}>
-                {selectedTransaction.type === TransactionType.INCOME ? '+' : '-'}{selectedTransaction.amount.toLocaleString()} <span className="text-sm text-dark-muted font-normal">ကျပ်</span>
+                {selectedTransaction.type === TransactionType.INCOME ? '+' : '-'}{selectedTransaction.amount.toLocaleString()} <span className="text-sm text-dark-muted font-normal">{currency}</span>
               </span>
             </div>
             
@@ -1003,7 +1059,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                <div className="flex justify-between items-start">
                    <div className="flex items-center gap-3">
                         <div className="bg-primary/20 p-3 rounded-full">
-                            <Settings className="text-primary" size={24} />
+                            <SlidersHorizontal className="text-primary" size={24} />
                         </div>
                         <h3 className="text-lg font-bold text-white">Budget Settings</h3>
                    </div>
@@ -1017,7 +1073,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                <div className="space-y-4 pt-1 h-64 overflow-y-auto pr-1">
                    {/* Budget Amount */}
                    <div>
-                       <label className="block text-xs font-bold text-white uppercase mb-2">လျာထားချက် ပမာဏ (ကျပ်)</label>
+                       <label className="block text-xs font-bold text-white uppercase mb-2">လျာထားချက် ပမာဏ ({currency})</label>
                        <input 
                           type="number" 
                           value={tempBudget} 
