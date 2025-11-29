@@ -6,7 +6,7 @@ import {
   LogOut, Plus, Trash2, Home, Download, Loader2, ArrowUpDown, ArrowUp, ArrowDown, 
   X, Edit, Save, CheckCircle2, AlertCircle, Search, PieChart, BarChart3, LineChart as LineChartIcon,
   Utensils, Bus, ShoppingBag, Stethoscope, Zap, Gift, Smartphone, Briefcase, GraduationCap, CircleDollarSign,
-  Banknote, TrendingUp, Wallet, ArrowLeftRight, Heart, Copyright, Filter, Lock, HelpCircle, Mail, Send
+  Banknote, TrendingUp, Wallet, ArrowLeftRight, Heart, Copyright, Filter, Lock, HelpCircle, Mail, Send, Settings, Target
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
@@ -80,7 +80,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
   
   // Feature 3: Budget
   const [budgetLimit, setBudgetLimit] = useState<number>(0);
-  const [isEditingBudget, setIsEditingBudget] = useState(false);
+  const [showBudgetModal, setShowBudgetModal] = useState(false);
   const [tempBudget, setTempBudget] = useState('');
   const [isBudgetEnabled, setIsBudgetEnabled] = useState(true);
 
@@ -154,20 +154,35 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
     setIsLoading(false);
   };
 
-  const toggleBudgetFeature = () => {
+  const toggleBudgetFeature = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent modal opening if user clicks toggle
     const newState = !isBudgetEnabled;
     setIsBudgetEnabled(newState);
     localStorage.setItem(`budgetEnabled_${currentUser}`, String(newState));
   };
 
+  const openBudgetModal = () => {
+    setTempBudget(budgetLimit > 0 ? budgetLimit.toString() : '');
+    setShowBudgetModal(true);
+  };
+
   const handleSaveBudget = () => {
     const val = parseInt(tempBudget);
-    if (!isNaN(val) && val >= 0) {
+    if (!isNaN(val) && val > 0) {
       setBudgetLimit(val);
       localStorage.setItem(`budget_${currentUser}`, val.toString());
-      setIsEditingBudget(false);
+      setShowBudgetModal(false);
       showToast('ဘတ်ဂျက် သတ်မှတ်ပြီးပါပြီ');
+    } else {
+        showToast('ကျေးဇူးပြု၍ ပမာဏကို မှန်ကန်စွာထည့်ပါ', 'error');
     }
+  };
+
+  const handleRemoveBudget = () => {
+    setBudgetLimit(0);
+    localStorage.setItem(`budget_${currentUser}`, '0');
+    setShowBudgetModal(false);
+    showToast('ဘတ်ဂျက် ဖျက်သိမ်းလိုက်ပါပြီ');
   };
 
   const handleSaveTransaction = async (e: React.FormEvent) => {
@@ -500,18 +515,12 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                       </div>
                   </div>
 
-                  {isBudgetEnabled && (
+                  {isBudgetEnabled && budgetLimit > 0 && (
                     <button 
-                      onClick={() => {
-                          if (isEditingBudget) handleSaveBudget();
-                          else {
-                              setTempBudget(budgetLimit.toString());
-                              setIsEditingBudget(true);
-                          }
-                      }}
-                      className="text-xs text-primary hover:text-emerald-400 underline ml-1"
+                      onClick={openBudgetModal}
+                      className="text-dark-muted hover:text-white transition p-1"
                     >
-                        {isEditingBudget ? 'သိမ်းမည်' : 'ပြင်မည်'}
+                        <Settings size={18} />
                     </button>
                   )}
                 </div>
@@ -523,15 +532,16 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
               </div>
             ) : (
               <>
-                {isEditingBudget ? (
-                    <div className="flex gap-2">
-                        <input 
-                          type="number" 
-                          value={tempBudget} 
-                          onChange={(e) => setTempBudget(e.target.value)}
-                          className="w-full bg-slate-700 rounded px-2 py-1 text-white text-sm"
-                          placeholder="ပမာဏထည့်ပါ"
-                        />
+                {budgetLimit === 0 ? (
+                    <div className="py-2 text-center">
+                        <button 
+                            onClick={openBudgetModal}
+                            className="bg-slate-700/50 hover:bg-slate-700 border border-dashed border-slate-500 text-emerald-400 font-bold py-3 px-6 rounded-xl transition w-full flex flex-col items-center justify-center gap-2"
+                        >
+                            <Target size={24} className="mb-1" />
+                            <span>🎯 လစဉ်သုံးငွေ လျာထားချက် သတ်မှတ်မည်</span>
+                            <span className="text-[10px] text-dark-muted font-normal">ချွေတာလိုသော ပမာဏကို သတ်မှတ်ပြီး စီမံပါ</span>
+                        </button>
                     </div>
                 ) : (
                     <>
@@ -539,35 +549,33 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                             <span>သုံးစွဲမှု: {monthlyStats.expense.toLocaleString()}</span>
                             <span>လျာထားချက်: {budgetLimit > 0 ? budgetLimit.toLocaleString() : 'မသတ်မှတ်ထားပါ'}</span>
                         </div>
-                        {budgetLimit > 0 && (
-                            <div className="space-y-2 mt-1">
-                                <div className="w-full bg-slate-700 rounded-full h-2.5 overflow-hidden">
-                                    <div 
-                                        className={`h-2.5 rounded-full transition-all duration-500 ${isOverBudget ? 'bg-red-500' : isWarningZone ? 'bg-yellow-500' : 'bg-primary'}`} 
-                                        style={{ width: `${Math.min(budgetUsagePercent, 100)}%` }}
-                                    ></div>
-                                </div>
-                                
-                                {/* Budget Alerts */}
-                                {isOverBudget && (
-                                    <div className="flex items-start gap-2 text-xs text-red-300 bg-red-900/20 p-2 rounded border border-red-500/30">
-                                        <AlertCircle size={14} className="mt-0.5 shrink-0" />
-                                        <span>
-                                          လျာထားချက်ထက် <b className="text-white font-bold">{overSpentAmount.toLocaleString()} ကျပ်</b> ပိုသုံးမိနေပါပြီ!
-                                        </span>
-                                    </div>
-                                )}
-
-                                {isWarningZone && (
-                                    <div className="flex items-start gap-2 text-xs text-yellow-300 bg-yellow-900/20 p-2 rounded border border-yellow-500/30">
-                                        <AlertCircle size={14} className="mt-0.5 shrink-0" />
-                                        <span>
-                                          သတိပြုပါ: လျာထားချက်၏ ၈၀% ကျော်နေပါပြီ။ ချွေတာပါ။
-                                        </span>
-                                    </div>
-                                )}
+                        <div className="space-y-2 mt-1">
+                            <div className="w-full bg-slate-700 rounded-full h-2.5 overflow-hidden">
+                                <div 
+                                    className={`h-2.5 rounded-full transition-all duration-500 ${isOverBudget ? 'bg-red-500' : isWarningZone ? 'bg-yellow-500' : 'bg-primary'}`} 
+                                    style={{ width: `${Math.min(budgetUsagePercent, 100)}%` }}
+                                ></div>
                             </div>
-                        )}
+                            
+                            {/* Budget Alerts */}
+                            {isOverBudget && (
+                                <div className="flex items-start gap-2 text-xs text-red-300 bg-red-900/20 p-2 rounded border border-red-500/30">
+                                    <AlertCircle size={14} className="mt-0.5 shrink-0" />
+                                    <span>
+                                        လျာထားချက်ထက် <b className="text-white font-bold">{overSpentAmount.toLocaleString()} ကျပ်</b> ပိုသုံးမိနေပါပြီ!
+                                    </span>
+                                </div>
+                            )}
+
+                            {isWarningZone && (
+                                <div className="flex items-start gap-2 text-xs text-yellow-300 bg-yellow-900/20 p-2 rounded border border-yellow-500/30">
+                                    <AlertCircle size={14} className="mt-0.5 shrink-0" />
+                                    <span>
+                                        သတိပြုပါ: လျာထားချက်၏ ၈၀% ကျော်နေပါပြီ။ ချွေတာပါ။
+                                    </span>
+                                </div>
+                            )}
+                        </div>
                     </>
                 )}
               </>
@@ -917,6 +925,50 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                 </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Budget Settings Modal */}
+      {showBudgetModal && (
+        <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
+           <div className="bg-slate-800 rounded-2xl w-full max-w-sm p-6 space-y-4 shadow-2xl border border-slate-700 animate-in zoom-in-95 duration-200">
+               <div className="flex justify-between items-start">
+                   <div className="flex items-center gap-3">
+                        <div className="bg-primary/20 p-3 rounded-full">
+                            <Settings className="text-primary" size={24} />
+                        </div>
+                        <h3 className="text-lg font-bold text-white">Budget Settings</h3>
+                   </div>
+                   <button onClick={() => setShowBudgetModal(false)} className="text-dark-muted hover:text-white"><X size={20}/></button>
+               </div>
+               
+               <p className="text-dark-muted text-sm">
+                   ဤလအတွက် သုံးစွဲရန် လျာထားသော ငွေပမာဏကို သတ်မှတ်ပါ။
+               </p>
+
+               <div className="space-y-4 pt-2">
+                   <div>
+                       <label className="block text-xs font-bold text-dark-muted uppercase mb-1">လျာထားချက် ပမာဏ (ကျပ်)</label>
+                       <input 
+                          type="number" 
+                          value={tempBudget} 
+                          onChange={(e) => setTempBudget(e.target.value)}
+                          className="w-full bg-slate-700 rounded-xl px-4 py-3 text-white text-lg font-bold border-2 border-transparent focus:border-primary focus:outline-none"
+                          placeholder="0"
+                          autoFocus
+                       />
+                   </div>
+
+                   <div className="flex gap-3 pt-2">
+                       <button onClick={handleRemoveBudget} className="flex-1 py-3 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white font-bold text-sm transition border border-red-500/20">
+                           <Trash2 size={16} className="inline mr-1 mb-0.5" /> ပြန်ဖျက်မည်
+                       </button>
+                       <button onClick={handleSaveBudget} className="flex-1 py-3 rounded-xl bg-primary text-slate-900 hover:bg-emerald-600 font-bold text-sm transition shadow-lg shadow-emerald-900/20">
+                           <Save size={16} className="inline mr-1 mb-0.5" /> သိမ်းမည်
+                       </button>
+                   </div>
+               </div>
+           </div>
         </div>
       )}
 
