@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { loginUser, registerUser } from '../services/storageService';
-import { Wallet, CheckCircle2, AlertTriangle, Eye, EyeOff, ShieldCheck, PieChart, TrendingUp } from 'lucide-react';
+import { Wallet, CheckCircle2, AlertTriangle, Eye, EyeOff, ShieldCheck, PieChart, TrendingUp, Heart, Copyright } from 'lucide-react';
 
 interface AuthProps {
   onLogin: (username: string) => void;
@@ -68,17 +68,17 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
   return (
     <div className="min-h-screen bg-dark-bg flex flex-col lg:flex-row text-white font-sans">
       
-      {/* Left Section: Branding & Features */}
-      {/* On Mobile: Only show Logo and Title concisely. Hide extra text/features to save space */}
-      <div className="lg:w-1/2 p-6 lg:p-12 flex flex-col justify-center bg-slate-900 border-b lg:border-b-0 lg:border-r border-dark-border relative overflow-hidden shrink-0">
+      {/* Branding & Features Section */}
+      {/* Mobile: Order 2 (Bottom), Desktop: Order 1 (Left) */}
+      <div className="lg:w-1/2 p-6 lg:p-12 flex flex-col justify-center bg-slate-900 border-t lg:border-t-0 lg:border-r border-dark-border relative overflow-hidden shrink-0 order-2 lg:order-1">
          {/* Background decoration */}
          <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-10">
             <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary rounded-full blur-3xl"></div>
             <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-blue-500 rounded-full blur-3xl"></div>
          </div>
 
-         <div className="relative z-10 flex flex-col items-center lg:items-start text-center lg:text-left">
-            <div className="flex items-center gap-3 mb-2 lg:mb-6">
+         <div className="relative z-10 flex flex-col items-center lg:items-start text-center lg:text-left py-8 lg:py-0">
+            <div className="flex items-center gap-3 mb-6">
                 <div className="bg-primary/20 p-2 lg:p-3 rounded-xl">
                     <Wallet className="text-primary w-8 h-8 lg:w-10 lg:h-10" />
                 </div>
@@ -88,32 +88,51 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                 </div>
             </div>
 
-            {/* Desktop Only Content */}
-            <div className="hidden lg:block">
-                <p className="text-slate-300 text-lg mb-8 leading-relaxed">
-                    သင့်ငွေကြေးစီမံခန့်ခွဲမှုအတွက် အကောင်းဆုံးလက်ထောက်။ <br/>
-                    မြန်မာဘာသာဖြင့် အသုံးပြုရလွယ်ကူပြီး တိကျသေချာသော စာရင်းအင်းစနစ်။
-                </p>
+            <p className="text-slate-300 text-base lg:text-lg mb-8 leading-relaxed max-w-md lg:max-w-none">
+                သင့်ငွေကြေးစီမံခန့်ခွဲမှုအတွက် အကောင်းဆုံးလက်ထောက်။ <br className="hidden lg:block"/>
+                မြန်မာဘာသာဖြင့် အသုံးပြုရလွယ်ကူပြီး တိကျသေချာသော စာရင်းအင်းစနစ်။
+            </p>
 
-                <div className="space-y-4">
-                    {features.map((feature, idx) => (
-                        <div key={idx} className="flex items-center gap-3 text-slate-300">
-                            <div className="text-primary">{feature.icon}</div>
-                            <span>{feature.text}</span>
-                        </div>
-                    ))}
-                </div>
+            <div className="space-y-4 mb-8">
+                {features.map((feature, idx) => (
+                    <div key={idx} className="flex items-center gap-3 text-slate-300 text-sm lg:text-base">
+                        <div className="text-primary shrink-0">{feature.icon}</div>
+                        <span>{feature.text}</span>
+                    </div>
+                ))}
+            </div>
 
-                <div className="mt-12 text-xs text-slate-500">
-                    &copy; {new Date().getFullYear()} MoneyNote. Built for Myanmar Users.
-                </div>
+            {/* Footer matching Dashboard style */}
+            <div className="mt-8 lg:mt-12 text-center lg:text-left flex flex-col items-center lg:items-start gap-1 w-full pt-6 border-t border-slate-800 lg:border-none">
+                 <div className="flex items-center gap-1 font-bold text-slate-500 text-xs">
+                     <Copyright size={12} /> {new Date().getFullYear()} MoneyNote. All rights reserved.
+                 </div>
+                 <div className="flex items-center gap-1 text-primary/80 text-xs">
+                     <span className="opacity-75">Brought to you by</span> 
+                     <a href="#" className="font-bold hover:underline hover:text-primary">@swelmyel</a>
+                 </div>
+                 <div className="mt-1 text-[10px] text-slate-600">
+                     Made with <Heart size={10} className="inline text-red-500 mx-0.5" fill="currentColor"/> in Myanmar
+                 </div>
             </div>
          </div>
       </div>
 
-      {/* Right Section: Auth Form */}
-      <div className="lg:w-1/2 p-6 lg:p-12 flex items-center justify-center bg-slate-800/50 flex-grow">
+      {/* Auth Form Section */}
+      {/* Mobile: Order 1 (Top), Desktop: Order 2 (Right) */}
+      <div className="lg:w-1/2 p-6 lg:p-12 flex items-center justify-center bg-slate-800/50 flex-grow order-1 lg:order-2 min-h-[60vh] lg:min-h-auto">
         <div className="w-full max-w-md space-y-6 lg:space-y-8">
+            
+            {/* Mobile Only Header */}
+            <div className="lg:hidden text-center mb-6">
+                 <div className="flex items-center justify-center gap-2 mb-2">
+                    <div className="bg-primary/20 p-2 rounded-lg">
+                        <Wallet className="text-primary w-6 h-6" />
+                    </div>
+                    <span className="text-xl font-bold text-white">MoneyNote</span>
+                 </div>
+            </div>
+
             <div className="text-center lg:text-left">
                 <h2 className="text-2xl lg:text-3xl font-bold text-white mb-2">
                     {isLoginView ? 'ကြိုဆိုပါတယ်' : 'အကောင့်သစ်စတင်ရန်'}
