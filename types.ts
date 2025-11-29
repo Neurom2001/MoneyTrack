@@ -28,4 +28,5 @@ export interface BudgetSettings {
   limit_amount: number;
   warning_percent: number;
   danger_percent: number;
+  updated_at?: string; // Needed to check if budget is stale (from previous month)
 }

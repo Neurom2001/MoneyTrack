@@ -26,7 +26,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
 
   const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
     setToast({ msg, type });
-    setTimeout(() => setToast(null), 4000); // 4 seconds
+    setTimeout(() => setToast(null), 5000); 
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

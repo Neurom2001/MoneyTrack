@@ -167,6 +167,24 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
   const loadBudget = async () => {
     const settings = await getBudgetSettings();
     if (settings) {
+        // --- Auto Reset Logic ---
+        // Check if the budget is from a previous month
+        if (settings.updated_at) {
+            const budgetDate = new Date(settings.updated_at);
+            const now = new Date();
+            
+            // If the budget year or month is different from current, it's old.
+            // We reset it locally and optionally clear it in DB.
+            if (budgetDate.getMonth() !== now.getMonth() || budgetDate.getFullYear() !== now.getFullYear()) {
+                console.log("Budget is from previous month. Resetting...");
+                // Delete from DB so it doesn't show up again
+                await deleteBudgetSettings();
+                // Reset local state
+                setBudgetLimit(0);
+                return;
+            }
+        }
+
         setBudgetLimit(settings.limit_amount);
         setWarningPercent(settings.warning_percent);
         setDangerPercent(settings.danger_percent);
@@ -208,7 +226,8 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
     const { success, error } = await saveBudgetSettings({
         limit_amount: val,
         warning_percent: tempWarning,
-        danger_percent: tempDanger
+        danger_percent: tempDanger,
+        // updated_at is handled in storageService
     });
 
     if (success) {
