@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
       react(),
       VitePWA({
         registerType: 'autoUpdate',
-        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+        includeAssets: ['logo.svg'],
         manifest: {
           name: 'MoneyNote',
           short_name: 'MoneyNote',
@@ -25,19 +25,19 @@ export default defineConfig(({ mode }) => {
           orientation: 'portrait',
           icons: [
             {
-              src: 'pwa-192x192.png',
+              src: 'logo.svg',
               sizes: '192x192',
-              type: 'image/png'
+              type: 'image/svg+xml'
             },
             {
-              src: 'pwa-512x512.png',
+              src: 'logo.svg',
               sizes: '512x512',
-              type: 'image/png'
+              type: 'image/svg+xml'
             },
             {
-              src: 'pwa-512x512.png',
+              src: 'logo.svg',
               sizes: '512x512',
-              type: 'image/png',
+              type: 'image/svg+xml',
               purpose: 'any maskable'
             }
           ]
@@ -47,6 +47,5 @@ export default defineConfig(({ mode }) => {
         }
       })
     ],
-    // Removed process.env.API_KEY define as Gemini is no longer used
   };
 });
