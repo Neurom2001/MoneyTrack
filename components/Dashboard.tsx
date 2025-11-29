@@ -6,7 +6,7 @@ import {
   LogOut, Plus, Trash2, Home, Download, Loader2, ArrowUpDown, ArrowUp, ArrowDown, 
   X, Edit, Save, CheckCircle2, AlertCircle, Search, PieChart, BarChart3, LineChart as LineChartIcon,
   Utensils, Bus, ShoppingBag, Stethoscope, Zap, Gift, Smartphone, Briefcase, GraduationCap, CircleDollarSign,
-  Banknote, TrendingUp, Wallet, ArrowLeftRight, Heart, Copyright, Filter, Lock
+  Banknote, TrendingUp, Wallet, ArrowLeftRight, Heart, Copyright, Filter, Lock, HelpCircle, Mail, Send
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
@@ -91,6 +91,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showExportConfirm, setShowExportConfirm] = useState(false);
+  const [showSupportModal, setShowSupportModal] = useState(false);
   
   const [toast, setToast] = useState<{msg: string, type: 'success' | 'error'} | null>(null);
 
@@ -441,6 +442,9 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
             </div>
           </div>
           <div className="flex gap-2">
+            <button onClick={() => setShowSupportModal(true)} className="text-dark-muted hover:text-blue-400 transition text-xs border border-dark-border px-2 py-1.5 rounded flex items-center gap-1">
+                <HelpCircle size={14} /> <span className="hidden sm:inline">Feedback</span>
+            </button>
             <button onClick={() => setShowExportConfirm(true)} className="text-dark-muted hover:text-emerald-400 transition text-xs border border-dark-border px-2 py-1.5 rounded flex items-center gap-1">
                 <Download size={14} /> <span className="hidden sm:inline">Export</span>
             </button>
@@ -746,12 +750,17 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
          <div className="flex items-center gap-1 font-bold text-slate-500">
              <Copyright size={12} /> {new Date().getFullYear()} MoneyNote. All rights reserved.
          </div>
-         <div className="flex items-center gap-1 text-primary/80">
-             <span className="opacity-75">Brought to you by</span> 
-             <a href="https://t.me/swelmyel" target="_blank" rel="noopener noreferrer" className="font-bold hover:underline hover:text-primary">@swelmyel</a>
+         <div className="flex items-center gap-3 text-primary/80">
+             <a href="mailto:bornaskraz@gmail.com" className="flex items-center gap-1 font-bold hover:underline hover:text-primary">
+                <Mail size={12} /> Email
+             </a>
+             <span className="text-slate-700">|</span>
+             <a href="https://t.me/swelmyel" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 font-bold hover:underline hover:text-primary">
+                <Send size={12} /> Telegram
+             </a>
          </div>
          <div className="mt-2 text-[10px] text-slate-600">
-             Made with <Heart size={10} className="inline text-red-500 mx-0.5" fill="currentColor"/> in Myanmar
+             Made with <Heart size={10} className="inline text-red-500 mx-0.5" fill="currentColor"/> in Myanmar by @swelmyel
          </div>
       </footer>
 
@@ -902,6 +911,45 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                 </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Support / Feedback Modal */}
+      {showSupportModal && (
+        <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
+           <div className="bg-slate-800 rounded-2xl w-full max-w-sm p-6 space-y-4 shadow-2xl border border-slate-700 animate-in zoom-in-95 duration-200">
+               <div className="flex justify-between items-start">
+                   <div className="flex items-center gap-3">
+                        <div className="bg-blue-500/10 p-3 rounded-full">
+                            <HelpCircle className="text-blue-500" size={24} />
+                        </div>
+                        <h3 className="text-lg font-bold text-white">Feedback & Support</h3>
+                   </div>
+                   <button onClick={() => setShowSupportModal(false)} className="text-dark-muted hover:text-white"><X size={20}/></button>
+               </div>
+               
+               <p className="text-dark-muted text-sm">
+                   အကြံပြုချက်များ ပေးပို့ရန် သို့မဟုတ် အကူအညီလိုအပ်ပါက ဆက်သွယ်နိုင်ပါသည်။
+               </p>
+               
+               <div className="space-y-3 pt-2">
+                   <a href="mailto:bornaskraz@gmail.com" className="flex items-center gap-4 p-3 bg-slate-700/50 hover:bg-slate-700 border border-slate-600 rounded-xl transition group">
+                       <div className="bg-slate-600 p-2 rounded-lg group-hover:bg-slate-500 transition"><Mail size={20} className="text-white"/></div>
+                       <div>
+                           <div className="text-xs text-dark-muted font-bold uppercase">Email</div>
+                           <div className="text-sm text-white font-medium">bornaskraz@gmail.com</div>
+                       </div>
+                   </a>
+                   
+                   <a href="https://t.me/swelmyel" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-3 bg-slate-700/50 hover:bg-slate-700 border border-slate-600 rounded-xl transition group">
+                       <div className="bg-blue-500/20 p-2 rounded-lg group-hover:bg-blue-500/30 transition"><Send size={20} className="text-blue-400"/></div>
+                       <div>
+                           <div className="text-xs text-dark-muted font-bold uppercase">Telegram</div>
+                           <div className="text-sm text-white font-medium">@swelmyel</div>
+                       </div>
+                   </a>
+               </div>
+           </div>
         </div>
       )}
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { loginUser, registerUser } from '../services/storageService';
-import { Wallet, CheckCircle2, AlertTriangle, Eye, EyeOff, ShieldCheck, PieChart, TrendingUp, Heart, Copyright } from 'lucide-react';
+import { Wallet, CheckCircle2, AlertTriangle, Eye, EyeOff, ShieldCheck, PieChart, TrendingUp, Heart, Copyright, Mail, Send } from 'lucide-react';
 
 interface AuthProps {
   onLogin: (username: string) => void;
@@ -107,12 +107,17 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                  <div className="flex items-center gap-1 font-bold text-slate-500 text-xs">
                      <Copyright size={12} /> {new Date().getFullYear()} MoneyNote. All rights reserved.
                  </div>
-                 <div className="flex items-center gap-1 text-primary/80 text-xs">
-                     <span className="opacity-75">Brought to you by</span> 
-                     <a href="https://t.me/swelmyel" target="_blank" rel="noopener noreferrer" className="font-bold hover:underline hover:text-primary">@swelmyel</a>
+                 <div className="flex items-center gap-3 text-primary/80 text-xs">
+                     <a href="mailto:bornaskraz@gmail.com" className="flex items-center gap-1 font-bold hover:underline hover:text-primary">
+                        <Mail size={12} /> Email
+                     </a>
+                     <span className="text-slate-700">|</span>
+                     <a href="https://t.me/swelmyel" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 font-bold hover:underline hover:text-primary">
+                        <Send size={12} /> Telegram
+                     </a>
                  </div>
                  <div className="mt-1 text-[10px] text-slate-600">
-                     Made with <Heart size={10} className="inline text-red-500 mx-0.5" fill="currentColor"/> in Myanmar
+                     Made with <Heart size={10} className="inline text-red-500 mx-0.5" fill="currentColor"/> in Myanmar by @swelmyel
                  </div>
             </div>
          </div>
@@ -176,6 +181,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                         className="w-full px-4 py-3 bg-slate-900 border border-slate-600 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition placeholder-slate-500"
                         placeholder="ဥပမာ - mgmg"
                         disabled={isLoading}
+                        autoComplete="username"
                     />
                 </div>
                 
@@ -191,6 +197,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                             className="w-full px-4 py-3 bg-slate-900 border border-slate-600 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition placeholder-slate-500 pr-12"
                             placeholder="အနည်းဆုံး ၆ လုံး"
                             disabled={isLoading}
+                            autoComplete={isLoginView ? "current-password" : "new-password"}
                         />
                         <button
                             type="button"
