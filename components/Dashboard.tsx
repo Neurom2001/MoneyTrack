@@ -509,7 +509,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                         className="bg-slate-700/50 hover:bg-slate-700 border border-dashed border-slate-500 text-emerald-400 font-bold py-3 px-6 rounded-xl transition w-full flex flex-col items-center justify-center gap-2"
                     >
                         <Target size={24} className="mb-1" />
-                        <span>🎯 လစဉ်သုံးငွေ လျာထားချက် သတ်မှတ်မည်</span>
+                        <span> လစဉ်သုံးငွေ လျာထားချက် သတ်မှတ်မည်</span>
                         <span className="text-[10px] text-dark-muted font-normal">ချွေတာလိုသော ပမာဏကို သတ်မှတ်ပြီး စီမံပါ</span>
                     </button>
                 </div>
