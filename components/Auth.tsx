@@ -24,10 +24,10 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
   const t = TRANSLATIONS[language];
 
   const features = [
-    { icon: <TrendingUp size={20} />, text: t.feat1 },
-    { icon: <PieChart size={20} />, text: t.feat2 },
-    { icon: <Wallet size={20} />, text: t.feat3 },
-    { icon: <ShieldCheck size={20} />, text: t.feat4 },
+    { icon: <TrendingUp size={24} />, text: t.feat1 },
+    { icon: <PieChart size={24} />, text: t.feat2 },
+    { icon: <Wallet size={24} />, text: t.feat3 },
+    { icon: <ShieldCheck size={24} />, text: t.feat4 },
   ];
 
   const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
@@ -117,7 +117,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[60] animate-in slide-in-from-top-2 fade-in duration-300 w-11/12 max-w-sm text-center">
           <div className={`flex flex-col items-center gap-2 px-6 py-4 rounded-xl shadow-2xl border backdrop-blur-md ${toast.type === 'success' ? 'bg-emerald-900/95 border-emerald-500 text-emerald-100' : 'bg-red-900/95 border-red-500 text-red-100'}`}>
             {toast.type === 'success' ? <CheckCircle2 size={32} className="mb-1" /> : <AlertCircle size={32} className="mb-1" />}
-            <span className="text-sm font-bold">{toast.msg}</span>
+            <span className="text-base font-bold">{toast.msg}</span>
           </div>
         </div>
       )}
@@ -132,17 +132,17 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
          </div>
 
          <div className="relative z-10 flex flex-col items-center lg:items-start text-center lg:text-left py-8 lg:py-0">
-            <div className="flex items-center gap-3 mb-6">
-                <div className="bg-gradient-to-br from-primary to-emerald-600 p-3 rounded-2xl shadow-lg shadow-primary/20">
-                    <Wallet className="text-slate-900 w-8 h-8 lg:w-10 lg:h-10" />
+            <div className="flex items-center gap-4 mb-8">
+                <div className="bg-gradient-to-br from-primary to-emerald-600 p-4 rounded-2xl shadow-lg shadow-primary/20">
+                    <Wallet className="text-slate-900 w-10 h-10 lg:w-12 lg:h-12" />
                 </div>
                 <div>
-                    <h1 className="text-2xl lg:text-4xl font-bold tracking-tight text-white">{t.appName}</h1>
-                    <p className="text-emerald-400 font-medium text-xs lg:text-base tracking-widest uppercase">{t.appDesc}</p>
+                    <h1 className="text-3xl lg:text-5xl font-bold tracking-tight text-white">{t.appName}</h1>
+                    <p className="text-emerald-400 font-medium text-sm lg:text-lg tracking-widest uppercase mt-1">{t.appDesc}</p>
                 </div>
             </div>
 
-            <p className="text-slate-300 text-base lg:text-lg mb-8 leading-relaxed max-w-md lg:max-w-none hidden lg:block">
+            <p className="text-slate-300 text-lg lg:text-xl mb-10 leading-relaxed max-w-md lg:max-w-none hidden lg:block">
                 {language === 'my' ? (
                   <>သင့်ငွေကြေးစီမံခန့်ခွဲမှုအတွက် အကောင်းဆုံးလက်ထောက်။ <br/>မြန်မာဘာသာဖြင့် အသုံးပြုရလွယ်ကူပြီး တိကျသေချာသော စာရင်းအင်းစနစ်။</>
                 ) : language === 'ja' ? (
@@ -152,31 +152,31 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                 )}
             </p>
 
-            <div className="space-y-5 mb-8 w-full max-w-sm lg:max-w-none">
+            <div className="space-y-6 mb-10 w-full max-w-sm lg:max-w-none">
                 {features.map((feature, idx) => (
-                    <div key={idx} className="flex items-center gap-4 text-slate-300 text-sm lg:text-base p-3 bg-slate-800/40 rounded-xl border border-slate-700/50 hover:bg-slate-800/80 transition group">
-                        <div className="text-primary bg-primary/10 p-2 rounded-lg group-hover:bg-primary group-hover:text-slate-900 transition duration-300 shrink-0">{feature.icon}</div>
+                    <div key={idx} className="flex items-center gap-5 text-slate-300 text-base lg:text-lg p-4 bg-slate-800/40 rounded-xl border border-slate-700/50 hover:bg-slate-800/80 transition group">
+                        <div className="text-primary bg-primary/10 p-2.5 rounded-lg group-hover:bg-primary group-hover:text-slate-900 transition duration-300 shrink-0">{feature.icon}</div>
                         <span className="font-medium">{feature.text}</span>
                     </div>
                 ))}
             </div>
 
             {/* Footer matching Dashboard style */}
-            <div className="mt-8 lg:mt-12 text-center lg:text-left flex flex-col items-center lg:items-start gap-1 w-full pt-6 border-t border-slate-800 lg:border-none">
-                 <div className="flex items-center gap-1 font-bold text-slate-500 text-xs">
-                     <Copyright size={12} /> {new Date().getFullYear()} {t.appName}. All rights reserved.
+            <div className="mt-8 lg:mt-12 text-center lg:text-left flex flex-col items-center lg:items-start gap-1 w-full pt-8 border-t border-slate-800 lg:border-none">
+                 <div className="flex items-center gap-1 font-bold text-slate-500 text-sm">
+                     <Copyright size={14} /> {new Date().getFullYear()} {t.appName}. All rights reserved.
                  </div>
-                 <div className="flex items-center gap-3 text-primary/80 text-xs">
+                 <div className="flex items-center gap-3 text-primary/80 text-sm">
                      <a href="mailto:bornaskraz@gmail.com" className="flex items-center gap-1 font-bold hover:underline hover:text-primary transition">
-                        <Mail size={12} /> Email
+                        <Mail size={14} /> Email
                      </a>
                      <span className="text-slate-700">|</span>
                      <a href="https://t.me/swelmyel" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 font-bold hover:underline hover:text-primary transition">
-                        <Send size={12} /> Telegram
+                        <Send size={14} /> Telegram
                      </a>
                  </div>
-                 <div className="mt-1 text-[10px] text-slate-600">
-                     Made with <Heart size={10} className="inline text-red-500 mx-0.5" fill="currentColor"/> in Myanmar by @swelmyel
+                 <div className="mt-1 text-xs text-slate-600">
+                     Made with <Heart size={12} className="inline text-red-500 mx-0.5" fill="currentColor"/> in Myanmar by @swelmyel
                  </div>
             </div>
          </div>
@@ -193,7 +193,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                     <button
                         key={lang}
                         onClick={() => setLanguage(lang)}
-                        className={`px-3 py-1 rounded text-xs font-bold transition ${language === lang ? 'bg-primary text-slate-900' : 'text-slate-400 hover:text-white'}`}
+                        className={`px-4 py-1.5 rounded text-sm font-bold transition ${language === lang ? 'bg-primary text-slate-900' : 'text-slate-400 hover:text-white'}`}
                     >
                         {lang === 'my' ? 'MM' : lang === 'en' ? 'EN' : 'JP'}
                     </button>
@@ -205,51 +205,51 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
             
             {/* Mobile Only Header */}
             <div className="lg:hidden text-center mb-6">
-                 <div className="flex items-center justify-center gap-2 mb-2">
-                    <div className="bg-primary/20 p-2 rounded-lg">
-                        <Wallet className="text-primary w-6 h-6" />
+                 <div className="flex items-center justify-center gap-3 mb-2">
+                    <div className="bg-primary/20 p-2.5 rounded-lg">
+                        <Wallet className="text-primary w-8 h-8" />
                     </div>
-                    <span className="text-xl font-bold text-white">{t.appName}</span>
+                    <span className="text-2xl font-bold text-white">{t.appName}</span>
                  </div>
             </div>
 
             <div className="text-center lg:text-left">
-                <h2 className="text-2xl lg:text-3xl font-bold text-white mb-2">
+                <h2 className="text-3xl lg:text-4xl font-bold text-white mb-2">
                     {isLoginView ? t.loginTitle : t.registerTitle}
                 </h2>
-                <p className="text-slate-400 text-sm lg:text-base">
+                <p className="text-slate-400 text-base lg:text-lg">
                     {isLoginView ? t.loginSubtitle : t.registerSubtitle}
                 </p>
             </div>
 
             {/* Critical Warning Box */}
-            <div className="bg-amber-900/20 border border-amber-600/30 rounded-xl p-4 flex gap-3 items-start text-left shadow-sm">
-                <AlertTriangle className="text-amber-500 shrink-0 mt-0.5" size={20} />
-                <div className="text-xs lg:text-sm text-amber-200/80 leading-relaxed">
+            <div className="bg-amber-900/20 border border-amber-600/30 rounded-xl p-5 flex gap-3 items-start text-left shadow-sm">
+                <AlertTriangle className="text-amber-500 shrink-0 mt-0.5" size={24} />
+                <div className="text-sm lg:text-base text-amber-200/80 leading-relaxed">
                     <strong>{t.warningTitle}</strong> {t.warningText}
                 </div>
             </div>
 
             {error && (
-                <div className="bg-red-500/10 border border-red-500/50 text-red-200 px-4 py-3 rounded-xl text-sm flex items-center gap-2 animate-in shake">
-                    <AlertTriangle size={16} /> {error}
+                <div className="bg-red-500/10 border border-red-500/50 text-red-200 px-5 py-4 rounded-xl text-base flex items-center gap-3 animate-in shake">
+                    <AlertTriangle size={20} /> {error}
                 </div>
             )}
             
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                    <label className="block text-slate-300 text-xs font-bold uppercase tracking-wider mb-2">
+                    <label className="block text-slate-300 text-sm font-bold uppercase tracking-wider mb-2">
                         {t.username}
                     </label>
                     <div className="relative group">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <User size={18} className="text-slate-500 group-focus-within:text-primary transition"/>
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <User size={20} className="text-slate-500 group-focus-within:text-primary transition"/>
                         </div>
                         <input
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            className="w-full pl-10 pr-4 py-3.5 bg-slate-900 border border-slate-700 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition placeholder-slate-600 shadow-sm"
+                            className="w-full pl-12 pr-4 py-4 bg-slate-900 border border-slate-700 text-white text-lg rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition placeholder-slate-600 shadow-sm"
                             placeholder={t.usernamePlaceholder}
                             disabled={isLoading}
                             autoComplete="username"
@@ -258,18 +258,18 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                 </div>
                 
                 <div>
-                    <label className="block text-slate-300 text-xs font-bold uppercase tracking-wider mb-2">
+                    <label className="block text-slate-300 text-sm font-bold uppercase tracking-wider mb-2">
                         {t.password}
                     </label>
                     <div className="relative group">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <Lock size={18} className="text-slate-500 group-focus-within:text-primary transition"/>
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <Lock size={20} className="text-slate-500 group-focus-within:text-primary transition"/>
                         </div>
                         <input
                             type={showPassword ? "text" : "password"}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full pl-10 pr-12 py-3.5 bg-slate-900 border border-slate-700 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition placeholder-slate-600 shadow-sm"
+                            className="w-full pl-12 pr-12 py-4 bg-slate-900 border border-slate-700 text-white text-lg rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition placeholder-slate-600 shadow-sm"
                             placeholder={t.passwordPlaceholder}
                             disabled={isLoading}
                             autoComplete={isLoginView ? "current-password" : "new-password"}
@@ -277,9 +277,9 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition p-1"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition p-1.5"
                         >
-                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                         </button>
                     </div>
                 </div>
@@ -287,21 +287,21 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className={`w-full bg-gradient-to-r from-emerald-600 to-primary hover:from-emerald-500 hover:to-emerald-400 text-white font-bold py-4 px-4 rounded-xl shadow-lg shadow-emerald-900/30 transition duration-300 transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 group ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`w-full bg-gradient-to-r from-emerald-600 to-primary hover:from-emerald-500 hover:to-emerald-400 text-white font-bold py-4 px-4 rounded-xl shadow-lg shadow-emerald-900/30 transition duration-300 transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 group text-lg ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                     {isLoading ? (
                         <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                     ) : (
                         <>
                             {isLoginView ? t.loginBtn : t.registerBtn}
-                            <ArrowRight size={20} className="group-hover:translate-x-1 transition" />
+                            <ArrowRight size={24} className="group-hover:translate-x-1 transition" />
                         </>
                     )}
                 </button>
             </form>
 
-            <div className="text-center pt-6 border-t border-slate-700/50">
-                <p className="text-slate-400 text-sm mb-2">
+            <div className="text-center pt-8 border-t border-slate-700/50">
+                <p className="text-slate-400 text-base mb-3">
                     {isLoginView ? t.noAccount : t.hasAccount}
                 </p>
                 <button
@@ -311,7 +311,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                         setToast(null);
                     }}
                     disabled={isLoading}
-                    className="text-primary hover:text-emerald-300 font-bold transition flex items-center justify-center gap-1 mx-auto hover:underline decoration-2 underline-offset-4"
+                    className="text-primary hover:text-emerald-300 font-bold transition flex items-center justify-center gap-1 mx-auto hover:underline decoration-2 underline-offset-4 text-lg"
                 >
                     {isLoginView 
                     ? t.createAccount 

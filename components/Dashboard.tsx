@@ -577,39 +577,39 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
   if (isLoading && transactions.length === 0) {
     return (
         <div className="min-h-screen bg-dark-bg flex items-center justify-center text-emerald-500">
-            <Loader2 className="animate-spin" size={48} />
+            <Loader2 className="animate-spin" size={64} />
         </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-dark-bg pb-24 text-dark-text font-sans relative flex flex-col">
+    <div className="min-h-screen bg-dark-bg pb-24 text-dark-text font-sans relative flex flex-col text-base">
       {/* Toast */}
       {toast && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[60] animate-in slide-in-from-top-2 fade-in duration-300">
-          <div className={`flex items-center gap-2 px-4 py-3 rounded-lg shadow-xl border ${toast.type === 'success' ? 'bg-emerald-900/90 border-emerald-500 text-emerald-100' : 'bg-red-900/90 border-red-500 text-red-100'}`}>
-            {toast.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
-            <span className="text-sm font-medium">{toast.msg}</span>
+          <div className={`flex items-center gap-2 px-6 py-4 rounded-xl shadow-xl border ${toast.type === 'success' ? 'bg-emerald-900/90 border-emerald-500 text-emerald-100' : 'bg-red-900/90 border-red-500 text-red-100'}`}>
+            {toast.type === 'success' ? <CheckCircle2 size={24} /> : <AlertCircle size={24} />}
+            <span className="text-base font-medium">{toast.msg}</span>
           </div>
         </div>
       )}
 
       {/* Header */}
       <header className="bg-dark-card shadow-md sticky top-0 z-20 border-b border-dark-border">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="bg-primary/20 p-2 rounded-lg">
-                <Wallet className="text-primary" size={24} />
+        <div className="max-w-4xl mx-auto px-4 py-5 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="bg-primary/20 p-2.5 rounded-xl">
+                <Wallet className="text-primary" size={28} />
             </div>
             <div>
-                <h1 className="text-xl font-bold text-white leading-tight">{t.appName}</h1>
-                <p className="text-[10px] text-dark-muted">{t.appDesc}</p>
+                <h1 className="text-2xl font-bold text-white leading-tight">{t.appName}</h1>
+                <p className="text-xs text-dark-muted">{t.appDesc}</p>
             </div>
           </div>
           <div className="flex gap-2 items-center">
             {deferredPrompt && (
-                <button onClick={handleInstallClick} className="bg-primary/10 hover:bg-primary/20 text-primary transition text-xs sm:text-sm border border-primary/20 px-3 py-2 rounded-lg flex items-center gap-1 font-bold animate-pulse">
-                    <Smartphone size={16} /> <span className="hidden sm:inline">Install App</span>
+                <button onClick={handleInstallClick} className="bg-primary/10 hover:bg-primary/20 text-primary transition text-xs sm:text-sm border border-primary/20 px-4 py-2.5 rounded-xl flex items-center gap-1 font-bold animate-pulse">
+                    <Smartphone size={18} /> <span className="hidden sm:inline">Install App</span>
                 </button>
             )}
             
@@ -617,40 +617,40 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
             <div className="relative">
                 <button 
                   onClick={() => setShowSettingsMenu(!showSettingsMenu)} 
-                  className="bg-slate-700/50 hover:bg-slate-700 text-white p-2.5 rounded-xl border border-dark-border transition flex items-center justify-center"
+                  className="bg-slate-700/50 hover:bg-slate-700 text-white p-3 rounded-xl border border-dark-border transition flex items-center justify-center"
                 >
-                    <Settings size={20} />
+                    <Settings size={22} />
                 </button>
 
                 {showSettingsMenu && (
                     <>
                     <div className="fixed inset-0 z-40" onClick={() => setShowSettingsMenu(false)}></div>
-                    <div className="absolute right-0 top-full mt-2 w-64 bg-slate-800 rounded-2xl shadow-2xl border border-dark-border z-50 overflow-hidden animate-in fade-in slide-in-from-top-2">
+                    <div className="absolute right-0 top-full mt-2 w-72 bg-slate-800 rounded-2xl shadow-2xl border border-dark-border z-50 overflow-hidden animate-in fade-in slide-in-from-top-2">
                         
                         <div className="p-2 space-y-1 bg-slate-800">
                             {/* New: Currency Button */}
-                            <button onClick={() => {setShowCurrencyModal(true); setShowSettingsMenu(false);}} className="w-full text-left px-4 py-3 text-sm text-slate-300 hover:text-white hover:bg-slate-700 rounded-xl transition flex items-center gap-3">
-                                <Coins size={18} className="text-amber-400" /> {t.changeCurrency}
+                            <button onClick={() => {setShowCurrencyModal(true); setShowSettingsMenu(false);}} className="w-full text-left px-4 py-4 text-base text-slate-300 hover:text-white hover:bg-slate-700 rounded-xl transition flex items-center gap-3">
+                                <Coins size={20} className="text-amber-400" /> {t.changeCurrency}
                             </button>
 
                             {/* New: Language Button */}
-                            <button onClick={() => {setShowLanguageModal(true); setShowSettingsMenu(false);}} className="w-full text-left px-4 py-3 text-sm text-slate-300 hover:text-white hover:bg-slate-700 rounded-xl transition flex items-center gap-3">
-                                <Languages size={18} className="text-purple-400" /> {t.changeLanguage}
+                            <button onClick={() => {setShowLanguageModal(true); setShowSettingsMenu(false);}} className="w-full text-left px-4 py-4 text-base text-slate-300 hover:text-white hover:bg-slate-700 rounded-xl transition flex items-center gap-3">
+                                <Languages size={20} className="text-purple-400" /> {t.changeLanguage}
                             </button>
                             
                             <div className="h-px bg-dark-border mx-2 my-1"></div>
 
-                            <button onClick={() => {setShowSupportModal(true); setShowSettingsMenu(false);}} className="w-full text-left px-4 py-3 text-sm text-slate-300 hover:text-white hover:bg-slate-700 rounded-xl transition flex items-center gap-3">
-                                <HelpCircle size={18} className="text-blue-400" /> {t.feedback}
+                            <button onClick={() => {setShowSupportModal(true); setShowSettingsMenu(false);}} className="w-full text-left px-4 py-4 text-base text-slate-300 hover:text-white hover:bg-slate-700 rounded-xl transition flex items-center gap-3">
+                                <HelpCircle size={20} className="text-blue-400" /> {t.feedback}
                             </button>
-                            <button onClick={() => {setShowExportConfirm(true); setShowSettingsMenu(false);}} className="w-full text-left px-4 py-3 text-sm text-slate-300 hover:text-white hover:bg-slate-700 rounded-xl transition flex items-center gap-3">
-                                <Download size={18} className="text-emerald-400" /> {t.export}
+                            <button onClick={() => {setShowExportConfirm(true); setShowSettingsMenu(false);}} className="w-full text-left px-4 py-4 text-base text-slate-300 hover:text-white hover:bg-slate-700 rounded-xl transition flex items-center gap-3">
+                                <Download size={20} className="text-emerald-400" /> {t.export}
                             </button>
                             
                             <div className="h-px bg-dark-border mx-2 my-1"></div>
                             
-                            <button onClick={() => {setShowLogoutConfirm(true); setShowSettingsMenu(false);}} className="w-full text-left px-4 py-3 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition flex items-center gap-3 font-bold">
-                                <LogOut size={18} /> {t.logout}
+                            <button onClick={() => {setShowLogoutConfirm(true); setShowSettingsMenu(false);}} className="w-full text-left px-4 py-4 text-base text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition flex items-center gap-3 font-bold">
+                                <LogOut size={20} /> {t.logout}
                             </button>
                         </div>
                     </div>
@@ -664,43 +664,43 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6 flex-grow w-full">
         
         {/* User Welcome */}
-        <div className="flex items-center justify-between text-xs text-dark-muted px-1">
-            <span>{t.welcome}, <b className="text-white">{currentUser}</b></span>
+        <div className="flex items-center justify-between text-sm text-dark-muted px-1">
+            <span>{t.welcome}, <b className="text-white text-base">{currentUser}</b></span>
             <span>{getLocalDate()}</span>
         </div>
 
         {/* Monthly Stats Summary */}
         <div className="grid grid-cols-3 gap-2 sm:gap-4">
-             <div className="bg-dark-card p-3 rounded-xl border border-dark-border flex flex-col items-center justify-center shadow-sm">
-                 <span className="text-xs text-dark-muted mb-1">{t.income}</span>
-                 <span className="text-emerald-400 font-bold text-sm sm:text-lg">+{monthlyStats.income.toLocaleString()}</span>
+             <div className="bg-dark-card p-4 rounded-xl border border-dark-border flex flex-col items-center justify-center shadow-sm">
+                 <span className="text-sm text-dark-muted mb-1">{t.income}</span>
+                 <span className="text-emerald-400 font-bold text-base sm:text-xl">+{monthlyStats.income.toLocaleString()}</span>
              </div>
-             <div className="bg-dark-card p-3 rounded-xl border border-dark-border flex flex-col items-center justify-center shadow-sm">
-                 <span className="text-xs text-dark-muted mb-1">{t.expense}</span>
-                 <span className="text-red-400 font-bold text-sm sm:text-lg">-{monthlyStats.expense.toLocaleString()}</span>
+             <div className="bg-dark-card p-4 rounded-xl border border-dark-border flex flex-col items-center justify-center shadow-sm">
+                 <span className="text-sm text-dark-muted mb-1">{t.expense}</span>
+                 <span className="text-red-400 font-bold text-base sm:text-xl">-{monthlyStats.expense.toLocaleString()}</span>
              </div>
-             <div className="bg-dark-card p-3 rounded-xl border border-dark-border flex flex-col items-center justify-center shadow-sm">
-                 <span className="text-xs text-dark-muted mb-1">{t.balance}</span>
-                 <span className={`font-bold text-sm sm:text-lg ${monthlyStats.net >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+             <div className="bg-dark-card p-4 rounded-xl border border-dark-border flex flex-col items-center justify-center shadow-sm">
+                 <span className="text-sm text-dark-muted mb-1">{t.balance}</span>
+                 <span className={`font-bold text-base sm:text-xl ${monthlyStats.net >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                     {monthlyStats.net > 0 ? '+' : ''}{monthlyStats.net.toLocaleString()}
                  </span>
              </div>
         </div>
 
         {/* Feature 3: Budget Goal */}
-        <div className="bg-dark-card rounded-xl p-4 border border-dark-border relative overflow-hidden group">
-            <div className="flex justify-between items-center mb-3">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                   <PieChart size={16} className="text-primary"/> {t.budgetTitle}
+        <div className="bg-dark-card rounded-xl p-5 border border-dark-border relative overflow-hidden group">
+            <div className="flex justify-between items-center mb-4">
+                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                   <PieChart size={18} className="text-primary"/> {t.budgetTitle}
                 </h3>
                 
                 {/* Only show settings if budget is set */}
                 {budgetLimit > 0 && (
                   <button 
                     onClick={openBudgetModal}
-                    className="text-dark-muted hover:text-white transition p-1.5 hover:bg-slate-700 rounded-lg"
+                    className="text-dark-muted hover:text-white transition p-2 hover:bg-slate-700 rounded-lg"
                   >
-                      <SlidersHorizontal size={18} />
+                      <SlidersHorizontal size={20} />
                   </button>
                 )}
             </div>
@@ -709,21 +709,21 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                 <div className="py-2 text-center">
                     <button 
                         onClick={openBudgetModal}
-                        className="bg-slate-700/50 hover:bg-slate-700 border border-dashed border-slate-500 text-emerald-400 font-bold py-3 px-6 rounded-xl transition w-full flex flex-col items-center justify-center gap-2 group-hover:border-emerald-500/50"
+                        className="bg-slate-700/50 hover:bg-slate-700 border border-dashed border-slate-500 text-emerald-400 font-bold py-4 px-6 rounded-xl transition w-full flex flex-col items-center justify-center gap-2 group-hover:border-emerald-500/50"
                     >
-                        <Target size={24} className="mb-1 text-emerald-500" />
-                        <span>🎯 {t.setBudget}</span>
-                        <span className="text-[10px] text-dark-muted font-normal">{t.setBudgetDesc}</span>
+                        <Target size={28} className="mb-1 text-emerald-500" />
+                        <span className="text-lg">🎯 {t.setBudget}</span>
+                        <span className="text-xs text-dark-muted font-normal">{t.setBudgetDesc}</span>
                     </button>
                 </div>
             ) : (
                 <>
-                    <div className="flex justify-between text-xs text-dark-muted mb-1.5">
+                    <div className="flex justify-between text-sm text-dark-muted mb-2">
                         <span className="font-medium text-white">{t.spent}: {monthlyStats.expense.toLocaleString()}</span>
                         <span>{t.limit}: {budgetLimit.toLocaleString()}</span>
                     </div>
                     <div className="space-y-3 mt-1">
-                        <div className="w-full bg-slate-700 rounded-full h-3 overflow-hidden relative">
+                        <div className="w-full bg-slate-700 rounded-full h-4 overflow-hidden relative">
                             <div 
                                 className={`h-full rounded-full transition-all duration-700 ease-out ${isDangerZone ? 'bg-red-500' : isWarningZone ? 'bg-yellow-500' : 'bg-primary'}`} 
                                 style={{ width: `${Math.min(budgetUsagePercent, 100)}%` }}
@@ -732,8 +732,8 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                         
                         {/* Budget Alerts */}
                         {isDangerZone ? (
-                            <div className="flex items-start gap-2 text-xs text-red-200 bg-red-900/30 p-2.5 rounded-lg border border-red-500/30 animate-in fade-in">
-                                <AlertTriangle size={16} className="text-red-500 shrink-0 mt-0.5" />
+                            <div className="flex items-start gap-2 text-sm text-red-200 bg-red-900/30 p-3 rounded-lg border border-red-500/30 animate-in fade-in">
+                                <AlertTriangle size={18} className="text-red-500 shrink-0 mt-0.5" />
                                 <div>
                                     <span className="font-bold text-red-400 block mb-0.5">{t.dangerState} ({dangerPercent}%)</span>
                                     {monthlyStats.expense > budgetLimit && (
@@ -742,16 +742,16 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                                 </div>
                             </div>
                         ) : isWarningZone ? (
-                            <div className="flex items-start gap-2 text-xs text-yellow-200 bg-yellow-900/30 p-2.5 rounded-lg border border-yellow-500/30 animate-in fade-in">
-                                <AlertCircle size={16} className="text-yellow-500 shrink-0 mt-0.5" />
+                            <div className="flex items-start gap-2 text-sm text-yellow-200 bg-yellow-900/30 p-3 rounded-lg border border-yellow-500/30 animate-in fade-in">
+                                <AlertCircle size={18} className="text-yellow-500 shrink-0 mt-0.5" />
                                 <div>
                                     <span className="font-bold text-yellow-400 block mb-0.5">{t.warning} ({warningPercent}%)</span>
                                     <span>{t.warningDesc}</span>
                                 </div>
                             </div>
                         ) : (
-                             <div className="flex items-center gap-2 text-[10px] text-emerald-400 bg-emerald-900/10 px-2 py-1 rounded border border-emerald-500/10 w-fit">
-                                <CheckCircle2 size={12}/> {t.normalState}
+                             <div className="flex items-center gap-2 text-xs text-emerald-400 bg-emerald-900/10 px-3 py-1.5 rounded border border-emerald-500/10 w-fit">
+                                <CheckCircle2 size={14}/> {t.normalState}
                              </div>
                         )}
                     </div>
@@ -761,19 +761,19 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
 
         {/* Search & Transaction Table */}
         <div className="bg-dark-card rounded-xl shadow-sm border border-dark-border overflow-hidden">
-          <div className="p-4 border-b border-dark-border bg-slate-800/50 space-y-3">
+          <div className="p-4 border-b border-dark-border bg-slate-800/50 space-y-4">
             <div className="flex justify-between items-center">
-              <h3 className="font-bold text-gray-200">
+              <h3 className="font-bold text-gray-200 text-lg">
                 {getBurmeseMonthName(filterDate)}
               </h3>
-              <span className="text-xs text-dark-muted bg-slate-700 px-2 py-1 rounded border border-dark-border">{filteredAndSortedTransactions.length} {t.items}</span>
+              <span className="text-sm text-dark-muted bg-slate-700 px-3 py-1 rounded border border-dark-border">{filteredAndSortedTransactions.length} {t.items}</span>
             </div>
             
             {/* Search Input & Category Filters */}
             <div className="space-y-3">
                  <div className="relative group">
                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                         <Search size={16} className="text-dark-muted group-focus-within:text-primary transition"/>
+                         <Search size={18} className="text-dark-muted group-focus-within:text-primary transition"/>
                      </div>
                      <input 
                          type="text" 
@@ -782,14 +782,14 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                          onFocus={() => setIsSearchFocused(true)}
                          onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
                          onChange={(e) => setSearchQuery(e.target.value)}
-                         className="w-full bg-slate-900 border border-dark-border text-white text-sm rounded-lg pl-10 pr-10 py-2.5 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition"
+                         className="w-full bg-slate-900 border border-dark-border text-white text-base rounded-lg pl-10 pr-10 py-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition"
                      />
                      {searchQuery && (
                         <button 
                             onClick={() => setSearchQuery('')}
                             className="absolute inset-y-0 right-0 pr-3 flex items-center text-dark-muted hover:text-white"
                         >
-                            <X size={16} />
+                            <X size={18} />
                         </button>
                      )}
                  </div>
@@ -797,18 +797,18 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                  {/* Category Chips - Only visible when search is focused or active */}
                  {(isSearchFocused || searchQuery) && (
                      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide no-scrollbar animate-in fade-in slide-in-from-top-2">
-                        <div className="flex items-center gap-1 text-dark-muted text-[10px] uppercase font-bold shrink-0">
-                            <Filter size={10} /> {t.filters}
+                        <div className="flex items-center gap-1 text-dark-muted text-xs uppercase font-bold shrink-0">
+                            <Filter size={12} /> {t.filters}
                         </div>
                         {allSearchCategories.map(cat => (
                             <button
                               key={cat}
                               onMouseDown={(e) => e.preventDefault()} // Prevent input blur when clicking
                               onClick={() => setSearchQuery(prev => prev === cat ? '' : cat)}
-                              className={`px-3 py-1 rounded-full text-[11px] font-medium whitespace-nowrap border transition flex items-center gap-1 group ${searchQuery === cat ? 'bg-primary text-slate-900 border-primary shadow-sm shadow-emerald-500/20' : 'bg-slate-800 text-dark-muted border-slate-700 hover:border-slate-500 hover:text-white'}`}
+                              className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap border transition flex items-center gap-1 group ${searchQuery === cat ? 'bg-primary text-slate-900 border-primary shadow-sm shadow-emerald-500/20' : 'bg-slate-800 text-dark-muted border-slate-700 hover:border-slate-500 hover:text-white'}`}
                             >
                               {cat}
-                              {searchQuery === cat && <X size={12} className="opacity-75 group-hover:bg-slate-900/20 rounded-full"/>}
+                              {searchQuery === cat && <X size={14} className="opacity-75 group-hover:bg-slate-900/20 rounded-full"/>}
                             </button>
                         ))}
                      </div>
@@ -817,16 +817,16 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-dark-text">
+            <table className="w-full text-left text-base text-dark-text">
               <thead className="bg-slate-800 text-dark-muted font-medium border-b border-dark-border">
                 <tr>
-                  <th onClick={() => handleSort('date')} className="px-4 py-3 cursor-pointer hover:bg-slate-700/50 transition w-1/4">
+                  <th onClick={() => handleSort('date')} className="px-4 py-4 cursor-pointer hover:bg-slate-700/50 transition w-1/4">
                     <div className="flex items-center">{t.date} {getSortIcon('date')}</div>
                   </th>
-                  <th onClick={() => handleSort('label')} className="px-4 py-3 cursor-pointer hover:bg-slate-700/50 transition w-2/4">
+                  <th onClick={() => handleSort('label')} className="px-4 py-4 cursor-pointer hover:bg-slate-700/50 transition w-2/4">
                     <div className="flex items-center">{t.label} {getSortIcon('label')}</div>
                   </th>
-                  <th onClick={() => handleSort('amount')} className="px-4 py-3 text-right cursor-pointer hover:bg-slate-700/50 transition w-1/4">
+                  <th onClick={() => handleSort('amount')} className="px-4 py-4 text-right cursor-pointer hover:bg-slate-700/50 transition w-1/4">
                      <div className="flex items-center justify-end">{t.amount} {getSortIcon('amount')}</div>
                   </th>
                 </tr>
@@ -834,16 +834,16 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
               <tbody className="divide-y divide-dark-border">
                 {filteredAndSortedTransactions.length === 0 ? (
                   <tr>
-                    <td colSpan={3} className="px-4 py-8 text-center text-dark-muted italic">
+                    <td colSpan={3} className="px-4 py-8 text-center text-dark-muted italic text-base">
                       {t.noData}
                     </td>
                   </tr>
                 ) : (
                   filteredAndSortedTransactions.map((t) => (
                     <tr key={t.id} onClick={() => handleRowClick(t)} className="hover:bg-slate-800/50 transition cursor-pointer active:bg-slate-800 group">
-                      <td className="px-4 py-3 whitespace-nowrap text-dark-muted">{formatDateDisplay(t.date)}</td>
-                      <td className="px-4 py-3 font-medium text-white">{t.label}</td>
-                      <td className={`px-4 py-3 text-right font-bold ${t.type === TransactionType.INCOME ? 'text-emerald-400' : 'text-red-400'}`}>
+                      <td className="px-4 py-4 whitespace-nowrap text-dark-muted text-sm sm:text-base">{formatDateDisplay(t.date)}</td>
+                      <td className="px-4 py-4 font-medium text-white">{t.label}</td>
+                      <td className={`px-4 py-4 text-right font-bold ${t.type === TransactionType.INCOME ? 'text-emerald-400' : 'text-red-400'}`}>
                         {t.type === TransactionType.INCOME ? '+' : '-'}{t.amount.toLocaleString()}
                       </td>
                     </tr>
@@ -856,22 +856,22 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
 
         {/* Feature 1: Charts Section (Moved to Bottom) */}
         {transactions.length > 0 && (
-          <div className="bg-dark-card rounded-xl p-4 border border-dark-border overflow-hidden">
+          <div className="bg-dark-card rounded-xl p-5 border border-dark-border overflow-hidden">
              <div className="flex justify-between items-center mb-4">
-                 <h3 className="text-sm font-bold text-white">{t.chartTitle}</h3>
+                 <h3 className="text-base font-bold text-white">{t.chartTitle}</h3>
                  <div className="flex bg-slate-800 rounded-lg p-1 gap-1">
-                     <button onClick={() => setChartType('bar')} className={`p-1.5 rounded ${chartType === 'bar' ? 'bg-slate-600 text-white' : 'text-dark-muted hover:text-white'}`}><BarChart3 size={16}/></button>
-                     <button onClick={() => setChartType('line')} className={`p-1.5 rounded ${chartType === 'line' ? 'bg-slate-600 text-white' : 'text-dark-muted hover:text-white'}`}><LineChartIcon size={16}/></button>
+                     <button onClick={() => setChartType('bar')} className={`p-2 rounded ${chartType === 'bar' ? 'bg-slate-600 text-white' : 'text-dark-muted hover:text-white'}`}><BarChart3 size={18}/></button>
+                     <button onClick={() => setChartType('line')} className={`p-2 rounded ${chartType === 'line' ? 'bg-slate-600 text-white' : 'text-dark-muted hover:text-white'}`}><LineChartIcon size={18}/></button>
                  </div>
              </div>
-             <div className="h-64 w-full">
+             <div className="h-72 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     {chartType === 'bar' ? (
                         <BarChart data={chartData}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                            <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} tickLine={false} />
-                            <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} />
-                            <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#f1f5f9' }} />
+                            <XAxis dataKey="name" stroke="#94a3b8" fontSize={14} tickLine={false} />
+                            <YAxis stroke="#94a3b8" fontSize={14} tickLine={false} />
+                            <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#f1f5f9', fontSize: '14px' }} />
                             <Legend />
                             <Bar dataKey="income" name={t.income} fill="#10b981" radius={[4, 4, 0, 0]} />
                             <Bar dataKey="expense" name={t.expense} fill="#ef4444" radius={[4, 4, 0, 0]} />
@@ -879,19 +879,19 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                     ) : chartType === 'line' ? (
                         <LineChart data={chartData}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                            <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} tickLine={false} />
-                            <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} />
-                            <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#f1f5f9' }} />
+                            <XAxis dataKey="name" stroke="#94a3b8" fontSize={14} tickLine={false} />
+                            <YAxis stroke="#94a3b8" fontSize={14} tickLine={false} />
+                            <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#f1f5f9', fontSize: '14px' }} />
                             <Legend />
-                            <Line type="monotone" dataKey="income" name={t.income} stroke="#10b981" strokeWidth={2} dot={false} />
-                            <Line type="monotone" dataKey="expense" name={t.expense} stroke="#ef4444" strokeWidth={2} dot={false} />
+                            <Line type="monotone" dataKey="income" name={t.income} stroke="#10b981" strokeWidth={3} dot={false} />
+                            <Line type="monotone" dataKey="expense" name={t.expense} stroke="#ef4444" strokeWidth={3} dot={false} />
                         </LineChart>
                     ) : (
                         <AreaChart data={chartData}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                            <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} tickLine={false} />
-                            <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} />
-                            <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#f1f5f9' }} />
+                            <XAxis dataKey="name" stroke="#94a3b8" fontSize={14} tickLine={false} />
+                            <YAxis stroke="#94a3b8" fontSize={14} tickLine={false} />
+                            <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#f1f5f9', fontSize: '14px' }} />
                             <Legend />
                             <Area type="monotone" dataKey="income" name={t.income} stroke="#10b981" fill="#10b981" fillOpacity={0.2} />
                             <Area type="monotone" dataKey="expense" name={t.expense} stroke="#ef4444" fill="#ef4444" fillOpacity={0.2} />
@@ -904,16 +904,16 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
 
         {/* Home Button */}
         {!isCurrentMonth && (
-            <button onClick={() => setFilterDate(currentMonth)} className="w-full py-3 rounded-xl border border-primary text-primary hover:bg-primary/10 transition flex items-center justify-center gap-2 font-bold">
-                <Home size={20} /> {t.backToCurrent}
+            <button onClick={() => setFilterDate(currentMonth)} className="w-full py-4 rounded-xl border border-primary text-primary hover:bg-primary/10 transition flex items-center justify-center gap-2 font-bold text-lg">
+                <Home size={24} /> {t.backToCurrent}
             </button>
         )}
 
         {/* History List */}
-        <div className="space-y-3 pt-4 border-t border-dark-border">
-          <h3 className="text-dark-muted text-sm font-bold uppercase tracking-wider">{t.historyTitle}</h3>
+        <div className="space-y-4 pt-4 border-t border-dark-border">
+          <h3 className="text-dark-muted text-base font-bold uppercase tracking-wider">{t.historyTitle}</h3>
           {historySummaries.length === 0 ? (
-             <p className="text-dark-muted text-sm">{t.noHistory}</p>
+             <p className="text-dark-muted text-base">{t.noHistory}</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {historySummaries.map(([monthKey, stats]) => (
@@ -923,11 +923,11 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                       setFilterDate(monthKey);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="bg-dark-card p-3 rounded-lg border border-dark-border hover:border-primary/50 transition text-left group"
+                  className="bg-dark-card p-4 rounded-xl border border-dark-border hover:border-primary/50 transition text-left group"
                 >
                   <div className="flex justify-between items-center mb-1">
-                    <span className="font-bold text-white group-hover:text-primary transition">{getBurmeseMonthName(monthKey)}</span>
-                    <span className={`text-xs font-bold ${stats.net >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{stats.net > 0 ? '+' : ''}{stats.net.toLocaleString()}</span>
+                    <span className="font-bold text-white group-hover:text-primary transition text-base">{getBurmeseMonthName(monthKey)}</span>
+                    <span className={`text-sm font-bold ${stats.net >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{stats.net > 0 ? '+' : ''}{stats.net.toLocaleString()}</span>
                   </div>
                 </button>
               ))}
@@ -937,21 +937,21 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
       </main>
 
       {/* Footer */}
-      <footer className="text-center py-8 mt-4 border-t border-dark-border bg-slate-900/50 text-dark-muted text-xs flex flex-col items-center justify-center gap-2">
+      <footer className="text-center py-10 mt-6 border-t border-dark-border bg-slate-900/50 text-dark-muted text-sm flex flex-col items-center justify-center gap-2">
          <div className="flex items-center gap-1 font-bold text-slate-500">
-             <Copyright size={12} /> {new Date().getFullYear()} {t.appName}. All rights reserved.
+             <Copyright size={14} /> {new Date().getFullYear()} {t.appName}. All rights reserved.
          </div>
          <div className="flex items-center gap-3 text-primary/80">
              <a href="mailto:bornaskraz@gmail.com" className="flex items-center gap-1 font-bold hover:underline hover:text-primary">
-                <Mail size={12} /> Email
+                <Mail size={14} /> Email
              </a>
              <span className="text-slate-700">|</span>
              <a href="https://t.me/swelmyel" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 font-bold hover:underline hover:text-primary">
-                <Send size={12} /> Telegram
+                <Send size={14} /> Telegram
              </a>
          </div>
-         <div className="mt-2 text-[10px] text-slate-600">
-             Made with <Heart size={10} className="inline text-red-500 mx-0.5" fill="currentColor"/> in Myanmar by @swelmyel
+         <div className="mt-2 text-xs text-slate-600">
+             Made with <Heart size={12} className="inline text-red-500 mx-0.5" fill="currentColor"/> in Myanmar by @swelmyel
          </div>
       </footer>
 
@@ -961,7 +961,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
           onClick={() => { resetForm(); setShowForm(true); }}
           className="fixed bottom-6 right-6 bg-primary hover:bg-emerald-600 text-slate-900 rounded-full p-4 shadow-lg shadow-emerald-900/20 transition hover:scale-105 active:scale-95 z-30"
         >
-          <Plus size={28} strokeWidth={2.5} />
+          <Plus size={32} strokeWidth={2.5} />
         </button>
       )}
 
@@ -970,13 +970,13 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
         <div className="fixed inset-0 bg-black/80 z-40 flex items-start sm:items-center justify-center p-4 pt-2 sm:pt-4">
           <div className="bg-slate-800 w-full max-w-lg rounded-2xl p-6 shadow-2xl animate-in zoom-in-95 duration-200 border border-slate-700 max-h-[85vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-white">
+              <h2 className="text-2xl font-bold text-white">
                 {editingId ? t.editTransaction : t.addTransaction}
               </h2>
-              <button onClick={resetForm} className="text-dark-muted hover:text-white transition"><X size={24} /></button>
+              <button onClick={resetForm} className="text-dark-muted hover:text-white transition"><X size={28} /></button>
             </div>
 
-            <form onSubmit={handleSaveTransaction} className="space-y-5">
+            <form onSubmit={handleSaveTransaction} className="space-y-6">
               <div className="grid grid-cols-2 gap-3 p-1 bg-slate-900 rounded-xl">
                 <button
                   type="button"
@@ -984,9 +984,9 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                     setType(TransactionType.EXPENSE);
                     setLabel(''); // Reset label when switching type
                   }}
-                  className={`py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center gap-2 ${type === TransactionType.EXPENSE ? 'bg-red-500 text-white shadow-lg' : 'text-dark-muted hover:text-white'}`}
+                  className={`py-3 rounded-lg text-base font-bold transition flex items-center justify-center gap-2 ${type === TransactionType.EXPENSE ? 'bg-red-500 text-white shadow-lg' : 'text-dark-muted hover:text-white'}`}
                 >
-                  <ArrowDown size={16} /> {t.expense}
+                  <ArrowDown size={18} /> {t.expense}
                 </button>
                 <button
                   type="button"
@@ -994,32 +994,32 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                     setType(TransactionType.INCOME);
                     setLabel(''); // Reset label when switching type
                   }}
-                  className={`py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center gap-2 ${type === TransactionType.INCOME ? 'bg-emerald-500 text-slate-900 shadow-lg' : 'text-dark-muted hover:text-white'}`}
+                  className={`py-3 rounded-lg text-base font-bold transition flex items-center justify-center gap-2 ${type === TransactionType.INCOME ? 'bg-emerald-500 text-slate-900 shadow-lg' : 'text-dark-muted hover:text-white'}`}
                 >
-                  <ArrowUp size={16} /> {t.income}
+                  <ArrowUp size={18} /> {t.income}
                 </button>
               </div>
 
               <div>
-                <label className="block text-dark-muted text-xs font-bold mb-1.5 uppercase tracking-wider">{t.amount} ({currency})</label>
+                <label className="block text-dark-muted text-sm font-bold mb-2 uppercase tracking-wider">{t.amount} ({currency})</label>
                 <input
                   type="number"
                   inputMode="numeric"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="w-full bg-slate-700 text-white text-2xl font-bold px-4 py-3 rounded-xl border-2 border-transparent focus:border-primary focus:outline-none transition placeholder-slate-500"
+                  className="w-full bg-slate-700 text-white text-3xl font-bold px-4 py-4 rounded-xl border-2 border-transparent focus:border-primary focus:outline-none transition placeholder-slate-500"
                   placeholder="0"
                   autoFocus
                 />
               </div>
 
               <div>
-                <label className="block text-dark-muted text-xs font-bold mb-1.5 uppercase tracking-wider">{t.label}</label>
+                <label className="block text-dark-muted text-sm font-bold mb-2 uppercase tracking-wider">{t.label}</label>
                 <input
                   type="text"
                   value={label}
                   onChange={(e) => setLabel(e.target.value)}
-                  className="w-full bg-slate-700 text-white px-4 py-3 rounded-xl border-2 border-transparent focus:border-primary focus:outline-none transition placeholder-slate-500 mb-2"
+                  className="w-full bg-slate-700 text-white text-lg px-4 py-3.5 rounded-xl border-2 border-transparent focus:border-primary focus:outline-none transition placeholder-slate-500 mb-3"
                   placeholder={type === TransactionType.INCOME ? t.labelPlaceholderIncome : t.labelPlaceholderExpense}
                 />
                 
@@ -1034,7 +1034,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                             title={cat.label}
                         >
                             <span className={label === cat.label ? 'text-primary' : 'text-dark-muted'}>{cat.icon}</span>
-                            <span className="text-[10px] mt-1 text-dark-muted truncate w-full text-center">{cat.label}</span>
+                            <span className="text-xs mt-1 text-dark-muted truncate w-full text-center">{cat.label}</span>
                         </button>
                     ))}
                 </div>
@@ -1043,9 +1043,9 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
               <button
                 type="submit"
                 disabled={isSaving || !amount || !label}
-                className="w-full bg-primary hover:bg-emerald-600 text-slate-900 font-bold py-4 rounded-xl shadow-lg shadow-emerald-900/20 transition disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2 mt-4"
+                className="w-full bg-primary hover:bg-emerald-600 text-slate-900 text-lg font-bold py-4 rounded-xl shadow-lg shadow-emerald-900/20 transition disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2 mt-4"
               >
-                {isSaving ? <Loader2 className="animate-spin" /> : <>{editingId ? <Save size={20} /> : <Plus size={20} />} {editingId ? t.save : t.add}</>}
+                {isSaving ? <Loader2 className="animate-spin" /> : <>{editingId ? <Save size={24} /> : <Plus size={24} />} {editingId ? t.save : t.add}</>}
               </button>
             </form>
           </div>
@@ -1058,47 +1058,47 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
           <div className="bg-slate-800 rounded-2xl w-full max-w-sm p-6 space-y-6 shadow-2xl border border-slate-700 animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-start">
               <div>
-                 <h3 className="text-lg font-bold text-white break-words">{selectedTransaction.label}</h3>
-                 <p className="text-dark-muted text-sm">{formatDateDisplay(selectedTransaction.date)}</p>
+                 <h3 className="text-xl font-bold text-white break-words">{selectedTransaction.label}</h3>
+                 <p className="text-dark-muted text-base">{formatDateDisplay(selectedTransaction.date)}</p>
               </div>
-              <button onClick={() => setSelectedTransaction(null)} className="text-dark-muted hover:text-white bg-slate-700 p-1 rounded-full"><X size={20} /></button>
+              <button onClick={() => setSelectedTransaction(null)} className="text-dark-muted hover:text-white bg-slate-700 p-1.5 rounded-full"><X size={22} /></button>
             </div>
-            <div className="text-3xl font-bold text-center py-2 bg-slate-900/50 rounded-xl">
+            <div className="text-4xl font-bold text-center py-4 bg-slate-900/50 rounded-xl">
               <span className={selectedTransaction.type === TransactionType.INCOME ? 'text-emerald-400' : 'text-red-400'}>
-                {selectedTransaction.type === TransactionType.INCOME ? '+' : '-'}{selectedTransaction.amount.toLocaleString()} <span className="text-sm text-dark-muted font-normal">{currency}</span>
+                {selectedTransaction.type === TransactionType.INCOME ? '+' : '-'}{selectedTransaction.amount.toLocaleString()} <span className="text-lg text-dark-muted font-normal">{currency}</span>
               </span>
             </div>
             
             {isCurrentMonth ? (
                 // Current Month Actions (Edit/Delete)
                 showDeleteConfirm ? (
-                     <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-4 space-y-4 animate-in fade-in slide-in-from-bottom-2">
+                     <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-5 space-y-4 animate-in fade-in slide-in-from-bottom-2">
                          <div className="flex items-center gap-3 text-red-200">
-                             <AlertCircle className="text-red-500 shrink-0" />
-                             <p className="font-bold text-sm">{t.confirmDelete}</p>
+                             <AlertCircle className="text-red-500 shrink-0" size={24} />
+                             <p className="font-bold text-base">{t.confirmDelete}</p>
                          </div>
-                         <div className="flex gap-3">
-                             <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 py-2 rounded-lg bg-slate-700 text-white hover:bg-slate-600 font-bold text-sm transition">{t.cancel}</button>
-                             <button onClick={confirmDelete} className="flex-1 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 font-bold text-sm transition shadow-lg shadow-red-900/20">{t.delete}</button>
+                         <div className="flex gap-4">
+                             <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 py-3 rounded-lg bg-slate-700 text-white hover:bg-slate-600 font-bold text-base transition">{t.cancel}</button>
+                             <button onClick={confirmDelete} className="flex-1 py-3 rounded-lg bg-red-600 text-white hover:bg-red-700 font-bold text-base transition shadow-lg shadow-red-900/20">{t.delete}</button>
                          </div>
                      </div>
                 ) : (
                     <div className="grid grid-cols-2 gap-4">
-                      <button onClick={handleEditClick} className="flex flex-col items-center justify-center gap-2 bg-slate-700 hover:bg-blue-600/20 hover:border-blue-500/50 border border-transparent p-4 rounded-xl transition group">
-                        <div className="bg-blue-500/10 p-3 rounded-full group-hover:bg-blue-500 text-blue-400 group-hover:text-white transition"><Edit size={24} /></div>
-                        <span className="text-sm font-bold text-blue-100 group-hover:text-blue-400">{t.edit}</span>
+                      <button onClick={handleEditClick} className="flex flex-col items-center justify-center gap-3 bg-slate-700 hover:bg-blue-600/20 hover:border-blue-500/50 border border-transparent p-5 rounded-xl transition group">
+                        <div className="bg-blue-500/10 p-3 rounded-full group-hover:bg-blue-500 text-blue-400 group-hover:text-white transition"><Edit size={28} /></div>
+                        <span className="text-base font-bold text-blue-100 group-hover:text-blue-400">{t.edit}</span>
                       </button>
-                      <button onClick={handleRequestDelete} className="flex flex-col items-center justify-center gap-2 bg-slate-700 hover:bg-red-600/20 hover:border-red-500/50 border border-transparent p-4 rounded-xl transition group">
-                         <div className="bg-red-500/10 p-3 rounded-full group-hover:bg-red-500 text-red-400 group-hover:text-white transition"><Trash2 size={24} /></div>
-                        <span className="text-sm font-bold text-red-100 group-hover:text-red-400">{t.delete}</span>
+                      <button onClick={handleRequestDelete} className="flex flex-col items-center justify-center gap-3 bg-slate-700 hover:bg-red-600/20 hover:border-red-500/50 border border-transparent p-5 rounded-xl transition group">
+                         <div className="bg-red-500/10 p-3 rounded-full group-hover:bg-red-500 text-red-400 group-hover:text-white transition"><Trash2 size={28} /></div>
+                        <span className="text-base font-bold text-red-100 group-hover:text-red-400">{t.delete}</span>
                       </button>
                     </div>
                 )
             ) : (
                 // Past Month (Read Only)
-                <div className="bg-slate-700/50 border border-dark-border rounded-xl p-4 flex items-center justify-center gap-3 text-dark-muted">
-                    <Lock size={20} />
-                    <span className="text-sm font-medium">{t.readOnly}</span>
+                <div className="bg-slate-700/50 border border-dark-border rounded-xl p-5 flex items-center justify-center gap-3 text-dark-muted">
+                    <Lock size={24} />
+                    <span className="text-base font-medium">{t.readOnly}</span>
                 </div>
             )}
           </div>
@@ -1113,8 +1113,8 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                    <div className="bg-amber-400/10 p-3 rounded-full">
                        <Coins className="text-amber-400" size={24} />
                    </div>
-                   <h3 className="text-lg font-bold text-white">{t.changeCurrency}</h3>
-                   <button onClick={() => setShowCurrencyModal(false)} className="ml-auto text-dark-muted hover:text-white"><X size={20}/></button>
+                   <h3 className="text-xl font-bold text-white">{t.changeCurrency}</h3>
+                   <button onClick={() => setShowCurrencyModal(false)} className="ml-auto text-dark-muted hover:text-white"><X size={24}/></button>
                </div>
                
                <div className="grid grid-cols-1 gap-2 pt-2">
@@ -1122,10 +1122,10 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                         <button 
                             key={c.id} 
                             onClick={() => handleCurrencyChange(c.symbol)}
-                            className={`px-4 py-3 rounded-xl border transition flex items-center justify-between group ${currency === c.symbol ? 'bg-primary/20 border-primary text-primary' : 'bg-slate-700/50 border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white'}`}
+                            className={`px-5 py-4 rounded-xl border transition flex items-center justify-between group ${currency === c.symbol ? 'bg-primary/20 border-primary text-primary' : 'bg-slate-700/50 border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white'}`}
                         >
-                            <span className="font-bold">{c.label} ({c.symbol})</span>
-                            {currency === c.symbol && <CheckCircle2 size={18} />}
+                            <span className="font-bold text-lg">{c.label} ({c.symbol})</span>
+                            {currency === c.symbol && <CheckCircle2 size={20} />}
                         </button>
                     ))}
                </div>
@@ -1141,8 +1141,8 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                    <div className="bg-purple-400/10 p-3 rounded-full">
                        <Languages className="text-purple-400" size={24} />
                    </div>
-                   <h3 className="text-lg font-bold text-white">{t.changeLanguage}</h3>
-                   <button onClick={() => setShowLanguageModal(false)} className="ml-auto text-dark-muted hover:text-white"><X size={20}/></button>
+                   <h3 className="text-xl font-bold text-white">{t.changeLanguage}</h3>
+                   <button onClick={() => setShowLanguageModal(false)} className="ml-auto text-dark-muted hover:text-white"><X size={24}/></button>
                </div>
                
                <div className="grid grid-cols-1 gap-2 pt-2">
@@ -1150,10 +1150,10 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                         <button 
                             key={l.code} 
                             onClick={() => handleLanguageChange(l.code as Language)}
-                            className={`px-4 py-3 rounded-xl border transition flex items-center justify-between group ${language === l.code ? 'bg-primary/20 border-primary text-primary' : 'bg-slate-700/50 border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white'}`}
+                            className={`px-5 py-4 rounded-xl border transition flex items-center justify-between group ${language === l.code ? 'bg-primary/20 border-primary text-primary' : 'bg-slate-700/50 border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white'}`}
                         >
-                            <span className="font-bold">{l.label}</span>
-                            {language === l.code && <CheckCircle2 size={18} />}
+                            <span className="font-bold text-lg">{l.label}</span>
+                            {language === l.code && <CheckCircle2 size={20} />}
                         </button>
                     ))}
                </div>
@@ -1164,37 +1164,37 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
       {/* Budget Settings Modal (Enhanced) */}
       {showBudgetModal && (
         <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
-           <div className="bg-slate-800 rounded-2xl w-full max-w-sm p-6 space-y-4 shadow-2xl border border-slate-700 animate-in zoom-in-95 duration-200">
+           <div className="bg-slate-800 rounded-2xl w-full max-w-sm p-6 space-y-5 shadow-2xl border border-slate-700 animate-in zoom-in-95 duration-200">
                <div className="flex justify-between items-start">
                    <div className="flex items-center gap-3">
                         <div className="bg-primary/20 p-3 rounded-full">
                             <SlidersHorizontal className="text-primary" size={24} />
                         </div>
-                        <h3 className="text-lg font-bold text-white">{t.budgetSettingsTitle}</h3>
+                        <h3 className="text-xl font-bold text-white">{t.budgetSettingsTitle}</h3>
                    </div>
-                   <button onClick={() => setShowBudgetModal(false)} className="text-dark-muted hover:text-white"><X size={20}/></button>
+                   <button onClick={() => setShowBudgetModal(false)} className="text-dark-muted hover:text-white"><X size={24}/></button>
                </div>
                
-               <p className="text-dark-muted text-sm border-b border-dark-border pb-3">
+               <p className="text-dark-muted text-base border-b border-dark-border pb-3">
                    {t.budgetSettingsDesc}
                </p>
 
-               <div className="space-y-4 pt-1 h-64 overflow-y-auto pr-1">
+               <div className="space-y-5 pt-1 h-72 overflow-y-auto pr-1">
                    {/* Budget Amount */}
                    <div>
-                       <label className="block text-xs font-bold text-white uppercase mb-2">{t.budgetAmount} ({currency})</label>
+                       <label className="block text-sm font-bold text-white uppercase mb-2">{t.budgetAmount} ({currency})</label>
                        <input 
                           type="number" 
                           value={tempBudget} 
                           onChange={(e) => setTempBudget(e.target.value)}
-                          className="w-full bg-slate-700 rounded-xl px-4 py-3 text-white text-lg font-bold border-2 border-transparent focus:border-primary focus:outline-none placeholder-slate-500"
+                          className="w-full bg-slate-700 rounded-xl px-4 py-4 text-white text-xl font-bold border-2 border-transparent focus:border-primary focus:outline-none placeholder-slate-500"
                           placeholder="0"
                        />
                    </div>
 
                    {/* Warning Threshold */}
                    <div>
-                      <div className="flex justify-between text-xs font-bold mb-2">
+                      <div className="flex justify-between text-sm font-bold mb-2">
                           <label className="text-yellow-400 uppercase">{t.warningAlert}</label>
                           <span className="text-yellow-400">{tempWarning}%</span>
                       </div>
@@ -1205,16 +1205,16 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                         step="5"
                         value={tempWarning}
                         onChange={(e) => setTempWarning(parseInt(e.target.value))}
-                        className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-yellow-400"
+                        className="w-full h-3 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-yellow-400"
                       />
-                      <p className="text-[10px] text-dark-muted mt-1">
+                      <p className="text-xs text-dark-muted mt-1">
                           {t.warningMsg.replace('%s', tempWarning.toString())}
                       </p>
                    </div>
 
                    {/* Danger Threshold */}
                    <div>
-                      <div className="flex justify-between text-xs font-bold mb-2">
+                      <div className="flex justify-between text-sm font-bold mb-2">
                           <label className="text-red-400 uppercase">{t.criticalAlert}</label>
                           <span className="text-red-400">{tempDanger}%</span>
                       </div>
@@ -1225,20 +1225,20 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                         step="5"
                         value={tempDanger}
                         onChange={(e) => setTempDanger(parseInt(e.target.value))}
-                        className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-red-500"
+                        className="w-full h-3 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-red-500"
                       />
-                      <p className="text-[10px] text-dark-muted mt-1">
+                      <p className="text-xs text-dark-muted mt-1">
                           {t.criticalMsg.replace('%s', tempDanger.toString())}
                       </p>
                    </div>
                </div>
 
                <div className="flex gap-3 pt-3 border-t border-dark-border">
-                   <button onClick={handleRemoveBudget} className="flex-1 py-3 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white font-bold text-sm transition border border-red-500/20">
-                       <Trash2 size={16} className="inline mr-1 mb-0.5" /> {t.delete}
+                   <button onClick={handleRemoveBudget} className="flex-1 py-3.5 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white font-bold text-base transition border border-red-500/20">
+                       <Trash2 size={18} className="inline mr-1 mb-0.5" /> {t.delete}
                    </button>
-                   <button onClick={handleSaveBudget} className="flex-1 py-3 rounded-xl bg-primary text-slate-900 hover:bg-emerald-600 font-bold text-sm transition shadow-lg shadow-emerald-900/20">
-                       <Save size={16} className="inline mr-1 mb-0.5" /> {t.save}
+                   <button onClick={handleSaveBudget} className="flex-1 py-3.5 rounded-xl bg-primary text-slate-900 hover:bg-emerald-600 font-bold text-base transition shadow-lg shadow-emerald-900/20">
+                       <Save size={18} className="inline mr-1 mb-0.5" /> {t.save}
                    </button>
                </div>
            </div>
@@ -1254,29 +1254,29 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                         <div className="bg-blue-500/10 p-3 rounded-full">
                             <HelpCircle className="text-blue-500" size={24} />
                         </div>
-                        <h3 className="text-lg font-bold text-white">{t.feedback} & Support</h3>
+                        <h3 className="text-xl font-bold text-white">{t.feedback} & Support</h3>
                    </div>
-                   <button onClick={() => setShowSupportModal(false)} className="text-dark-muted hover:text-white"><X size={20}/></button>
+                   <button onClick={() => setShowSupportModal(false)} className="text-dark-muted hover:text-white"><X size={24}/></button>
                </div>
                
-               <p className="text-dark-muted text-sm">
+               <p className="text-dark-muted text-base">
                    {language === 'my' ? 'အကြံပြုချက်များ ပေးပို့ရန် သို့မဟုတ် အကူအညီလိုအပ်ပါက ဆက်သွယ်နိုင်ပါသည်။' : 'Contact us for feedback or support.'}
                </p>
                
                <div className="space-y-3 pt-2">
-                   <a href="mailto:bornaskraz@gmail.com" className="flex items-center gap-4 p-3 bg-slate-700/50 hover:bg-slate-700 border border-slate-600 rounded-xl transition group">
-                       <div className="bg-slate-600 p-2 rounded-lg group-hover:bg-slate-500 transition"><Mail size={20} className="text-white"/></div>
+                   <a href="mailto:bornaskraz@gmail.com" className="flex items-center gap-4 p-4 bg-slate-700/50 hover:bg-slate-700 border border-slate-600 rounded-xl transition group">
+                       <div className="bg-slate-600 p-2 rounded-lg group-hover:bg-slate-500 transition"><Mail size={24} className="text-white"/></div>
                        <div>
                            <div className="text-xs text-dark-muted font-bold uppercase">Email</div>
-                           <div className="text-sm text-white font-medium">bornaskraz@gmail.com</div>
+                           <div className="text-base text-white font-medium">bornaskraz@gmail.com</div>
                        </div>
                    </a>
                    
-                   <a href="https://t.me/swelmyel" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-3 bg-slate-700/50 hover:bg-slate-700 border border-slate-600 rounded-xl transition group">
-                       <div className="bg-blue-500/20 p-2 rounded-lg group-hover:bg-blue-500/30 transition"><Send size={20} className="text-blue-400"/></div>
+                   <a href="https://t.me/swelmyel" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-4 bg-slate-700/50 hover:bg-slate-700 border border-slate-600 rounded-xl transition group">
+                       <div className="bg-blue-500/20 p-2 rounded-lg group-hover:bg-blue-500/30 transition"><Send size={24} className="text-blue-400"/></div>
                        <div>
                            <div className="text-xs text-dark-muted font-bold uppercase">Telegram</div>
-                           <div className="text-sm text-white font-medium">@swelmyel</div>
+                           <div className="text-base text-white font-medium">@swelmyel</div>
                        </div>
                    </a>
                </div>
@@ -1287,17 +1287,17 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
       {/* Logout Confirmation Modal */}
       {showLogoutConfirm && (
         <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
-           <div className="bg-slate-800 rounded-2xl w-full max-w-sm p-6 space-y-4 shadow-2xl border border-slate-700 animate-in zoom-in-95 duration-200">
+           <div className="bg-slate-800 rounded-2xl w-full max-w-sm p-6 space-y-5 shadow-2xl border border-slate-700 animate-in zoom-in-95 duration-200">
                <div className="flex items-center gap-3">
                    <div className="bg-red-500/10 p-3 rounded-full">
                        <LogOut className="text-red-500" size={24} />
                    </div>
-                   <h3 className="text-lg font-bold text-white">{t.logout}</h3>
+                   <h3 className="text-xl font-bold text-white">{t.logout}</h3>
                </div>
-               <p className="text-dark-muted text-sm">{t.logoutConfirm}</p>
-               <div className="flex gap-3 pt-2">
-                   <button onClick={() => setShowLogoutConfirm(false)} className="flex-1 py-2.5 rounded-xl bg-slate-700 text-white hover:bg-slate-600 font-bold text-sm transition">{t.cancel}</button>
-                   <button onClick={handleLogout} className="flex-1 py-2.5 rounded-xl bg-red-600 text-white hover:bg-red-700 font-bold text-sm transition shadow-lg shadow-red-900/20">{t.logout}</button>
+               <p className="text-dark-muted text-base">{t.logoutConfirm}</p>
+               <div className="flex gap-4 pt-2">
+                   <button onClick={() => setShowLogoutConfirm(false)} className="flex-1 py-3 rounded-xl bg-slate-700 text-white hover:bg-slate-600 font-bold text-base transition">{t.cancel}</button>
+                   <button onClick={handleLogout} className="flex-1 py-3 rounded-xl bg-red-600 text-white hover:bg-red-700 font-bold text-base transition shadow-lg shadow-red-900/20">{t.logout}</button>
                </div>
            </div>
         </div>
@@ -1306,17 +1306,17 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
       {/* Export Confirmation Modal */}
       {showExportConfirm && (
         <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
-           <div className="bg-slate-800 rounded-2xl w-full max-w-sm p-6 space-y-4 shadow-2xl border border-slate-700 animate-in zoom-in-95 duration-200">
+           <div className="bg-slate-800 rounded-2xl w-full max-w-sm p-6 space-y-5 shadow-2xl border border-slate-700 animate-in zoom-in-95 duration-200">
                <div className="flex items-center gap-3">
                    <div className="bg-emerald-500/10 p-3 rounded-full">
                        <Download className="text-emerald-500" size={24} />
                    </div>
-                   <h3 className="text-lg font-bold text-white">{t.export}</h3>
+                   <h3 className="text-xl font-bold text-white">{t.export}</h3>
                </div>
-               <p className="text-dark-muted text-sm">{t.exportConfirm}</p>
-               <div className="flex gap-3 pt-2">
-                   <button onClick={() => setShowExportConfirm(false)} className="flex-1 py-2.5 rounded-xl bg-slate-700 text-white hover:bg-slate-600 font-bold text-sm transition">{t.cancel}</button>
-                   <button onClick={handleExportCSV} className="flex-1 py-2.5 rounded-xl bg-emerald-600 text-slate-900 hover:bg-emerald-500 font-bold text-sm transition shadow-lg shadow-emerald-900/20">{t.get}</button>
+               <p className="text-dark-muted text-base">{t.exportConfirm}</p>
+               <div className="flex gap-4 pt-2">
+                   <button onClick={() => setShowExportConfirm(false)} className="flex-1 py-3 rounded-xl bg-slate-700 text-white hover:bg-slate-600 font-bold text-base transition">{t.cancel}</button>
+                   <button onClick={handleExportCSV} className="flex-1 py-3 rounded-xl bg-emerald-600 text-slate-900 hover:bg-emerald-500 font-bold text-base transition shadow-lg shadow-emerald-900/20">{t.get}</button>
                </div>
            </div>
         </div>
