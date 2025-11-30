@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Transaction, TransactionType, Theme } from '../types';
 import { 
   getTransactions, saveTransaction, deleteTransaction, updateTransaction, logoutUser,
@@ -133,6 +133,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
   
   // Voice Command State
   const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
 
   // PWA Install Prompt
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -234,18 +235,18 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
     const detectedAmount = amountMatch ? amountMatch[0] : '';
     
     if (!detectedAmount) {
-        showToast(language === 'my' ? 'ပမာဏကို နားမလည်ပါ' : 'Could not detect amount', 'error');
+        showToast(language === 'my' ? 'ပမာဏကို နားမလည်ပါ (ဥပမာ: မနက်စာ ၁၅၀၀)' : 'Could not detect amount', 'error');
         return;
     }
 
     // Keyword Mapping
     let detectedLabel = '';
     const keywords: Record<string, string[]> = {
-        'အစားအသောက်': ['နေ့လည်စာ', 'မနက်စာ', 'ထမင်း', 'ညစာ', 'လက်ဖက်ရည်', 'ကော်ဖီ', 'မုန့်'],
+        'အစားအသောက်': ['နေ့လည်စာ', 'မနက်စာ', 'ထမင်း', 'ညစာ', 'လက်ဖက်ရည်', 'ကော်ဖီ', 'မုန့်', 'အသား', 'ဟင်းသီးဟင်းရွက်'],
         'လမ်းစရိတ်': ['ကားခ', 'တက္ကစီ', 'ဆီဖိုး', 'ရထား', 'ဆိုင်ကယ်'],
-        'ဖုန်းဘေလ်': ['ဖုန်းဘေ', 'အင်တာနက်', 'ဒေတာ', 'ဘေလ်'],
-        'ဈေးဝယ်': ['ဈေး', 'အင်္ကျီ', 'ဖိနပ်'],
-        'ကျန်းမာရေး': ['ဆေး', 'ဆေးခန်း'],
+        'ဖုန်းဘေလ်': ['ဖုန်းဘေ', 'အင်တာနက်', 'ဒေတာ', 'ဘေလ်', 'wifi'],
+        'ဈေးဝယ်': ['ဈေး', 'အင်္ကျီ', 'ဖိနပ်', 'အသုံးအဆောင်'],
+        'ကျန်းမာရေး': ['ဆေး', 'ဆေးခန်း', 'ဆရာဝန်'],
     };
 
     // Check for specific keywords in the transcript
@@ -266,12 +267,13 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
     // Fallback: If no keyword found, check if they said the category name directly
     if (!foundCategory) {
         // Just take the text part excluding the number
-        detectedLabel = cleanTranscript.replace(/[0-9]/g, '').trim();
+        const potentialLabel = cleanTranscript.replace(/[0-9]/g, '').trim();
+        detectedLabel = potentialLabel || (language === 'my' ? 'အထွေထွေ' : 'General');
     }
 
     // Populate Form
     setAmount(detectedAmount);
-    setLabel(detectedLabel || (language === 'my' ? 'အထွေထွေ' : 'General'));
+    setLabel(detectedLabel);
     setType(TransactionType.EXPENSE); // Default voice to Expense for now
     setShowForm(true);
     showToast(language === 'my' ? 'အသံဖြင့် စာရင်းသွင်းရန် ပြင်ဆင်ပြီးပါပြီ' : 'Voice command processed', 'success');
@@ -286,17 +288,30 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
       return;
     }
 
+    // If already running, stop it (Toggle behavior)
+    if (recognitionRef.current && isListening) {
+        stopListening();
+        return;
+    }
+
     const recognition = new SpeechRecognition();
+    recognitionRef.current = recognition; // Store ref
     recognition.lang = 'my-MM'; // Set to Burmese
-    recognition.continuous = false;
+    recognition.continuous = false; // Stop after one sentence
     recognition.interimResults = false;
 
     recognition.onstart = () => {
       setIsListening(true);
     };
 
+    // Critical: Stop immediately when speech ends (Silence detection)
+    recognition.onspeechend = () => {
+        recognition.stop();
+    };
+
     recognition.onend = () => {
       setIsListening(false);
+      recognitionRef.current = null;
     };
 
     recognition.onresult = (event: any) => {
@@ -304,13 +319,30 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
       processVoiceCommand(transcript);
     };
 
+    recognition.onnomatch = () => {
+        setIsListening(false);
+        showToast(language === 'my' ? 'နားမလည်ပါ၊ ပြန်ပြောပါ' : 'Did not understand', 'error');
+    };
+
     recognition.onerror = (event: any) => {
+      if (event.error === 'no-speech') {
+         // User didn't say anything
+         setIsListening(false);
+         return;
+      }
       console.error('Speech recognition error', event.error);
       setIsListening(false);
       showToast('Error listening: ' + event.error, 'error');
     };
 
     recognition.start();
+  };
+
+  const stopListening = () => {
+      if (recognitionRef.current) {
+          recognitionRef.current.stop();
+      }
+      setIsListening(false);
   };
 
 
@@ -1064,7 +1096,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
         <div className="fixed bottom-24 sm:bottom-6 right-6 flex flex-col items-center gap-3 z-30">
             {/* Voice Command Button */}
             <button
-                onClick={isListening ? () => {} : startListening}
+                onClick={isListening ? stopListening : startListening}
                 className={`rounded-full p-3 shadow-lg transition-all duration-300 ${isListening ? 'bg-red-500 text-white animate-pulse ring-4 ring-red-500/30' : 'bg-slate-700 dark:bg-slate-600 hover:bg-slate-800 text-white'}`}
                 title="Voice Command (Burmese)"
             >
