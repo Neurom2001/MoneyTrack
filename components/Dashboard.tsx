@@ -11,19 +11,14 @@ import {
   LogOut, Plus, Trash2, Home, Download, Loader2, ArrowUpDown, ArrowUp, ArrowDown, 
   X, Edit, Save, CheckCircle2, AlertCircle, Search, PieChart, BarChart3, LineChart as LineChartIcon,
   Utensils, Bus, ShoppingBag, Stethoscope, Zap, Gift, Smartphone, Briefcase, GraduationCap, CircleDollarSign,
-  Banknote, TrendingUp, Wallet, ArrowLeftRight, Heart, Copyright, Filter, Lock, HelpCircle, Mail, Send, Settings, AlertTriangle, SlidersHorizontal, Languages, Moon, Sun, ClipboardList, PiggyBank, Mic, MicOff
+  Banknote, TrendingUp, Wallet, ArrowLeftRight, Heart, Copyright, Filter, Lock, HelpCircle, Mail, Send, Settings, AlertTriangle, SlidersHorizontal, Languages, Moon, Sun, ClipboardList, PiggyBank
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
   LineChart, Line, AreaChart, Area 
 } from 'recharts';
 import { TRANSLATIONS, Language } from '../utils/translations';
-
-// --- Extended Window Interface for Web Speech API ---
-interface IWindow extends Window {
-  webkitSpeechRecognition: any;
-  SpeechRecognition: any;
-}
+import VoiceExpenseInput from './VoiceExpenseInput';
 
 interface DashboardProps {
   currentUser: string;
@@ -131,10 +126,6 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
   const [showExportConfirm, setShowExportConfirm] = useState(false);
   const [showSupportModal, setShowSupportModal] = useState(false);
   
-  // Voice Command State
-  const [isListening, setIsListening] = useState(false);
-  const recognitionRef = useRef<any>(null);
-
   // PWA Install Prompt
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
@@ -230,12 +221,10 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
   const processVoiceCommand = async (transcript: string) => {
     console.log('Processing transcript:', transcript);
     const cleanTranscript = convertBurmeseNumbers(transcript);
-    console.log('Clean transcript (numbers converted):', cleanTranscript);
     
     // Regex to find numbers (Amount)
     const amountMatch = cleanTranscript.match(/(\d+)/);
     const detectedAmount = amountMatch ? amountMatch[0] : '';
-    console.log('Detected Amount:', detectedAmount);
     
     if (!detectedAmount) {
         showToast(language === 'my' ? 'ပမာဏကို နားမလည်ပါ (ဥပမာ: မနက်စာ ၁၅၀၀)' : 'Could not detect amount', 'error');
@@ -273,8 +262,6 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
         const potentialLabel = cleanTranscript.replace(/[0-9]/g, '').trim();
         detectedLabel = potentialLabel || (language === 'my' ? 'အထွေထွေ' : 'General');
     }
-
-    console.log('Detected Label:', detectedLabel);
 
     if (detectedAmount && detectedLabel) {
         // AUTO SAVE Logic
@@ -314,85 +301,6 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
         setShowForm(true);
         showToast(language === 'my' ? 'အသံဖြင့် စာရင်းသွင်းရန် ပြင်ဆင်ပြီးပါပြီ' : 'Voice command processed', 'success');
     }
-  };
-
-  const startListening = () => {
-    const Window = window as unknown as IWindow;
-    const SpeechRecognition = Window.SpeechRecognition || Window.webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
-      console.error('Web Speech API not supported in this browser.');
-      showToast('Web Speech API is not supported in this browser.', 'error');
-      return;
-    }
-
-    // If already running, stop it (Toggle behavior)
-    if (recognitionRef.current && isListening) {
-        stopListening();
-        return;
-    }
-
-    console.log('Initializing Speech Recognition...');
-    const recognition = new SpeechRecognition();
-    recognitionRef.current = recognition; // Store ref
-    recognition.lang = 'my-MM'; // Set to Burmese
-    recognition.continuous = false; // Stop after one sentence
-    recognition.interimResults = false;
-
-    recognition.onstart = () => {
-      console.log('Voice recognition started.');
-      setIsListening(true);
-    };
-
-    // Critical: Stop immediately when speech ends (Silence detection)
-    recognition.onspeechend = () => {
-        console.log('Speech ended (silence detected). Stopping recognition...');
-        recognition.stop();
-    };
-
-    recognition.onend = () => {
-      console.log('Voice recognition ended.');
-      setIsListening(false);
-      recognitionRef.current = null;
-    };
-
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      console.log('Voice result received:', transcript);
-      processVoiceCommand(transcript);
-    };
-
-    recognition.onnomatch = () => {
-        console.log('Voice recognition: No match.');
-        setIsListening(false);
-        showToast(language === 'my' ? 'နားမလည်ပါ၊ ပြန်ပြောပါ' : 'Did not understand', 'error');
-    };
-
-    recognition.onerror = (event: any) => {
-      // Ignore 'aborted' error which happens on manual stop or auto-stop race conditions
-      if (event.error === 'no-speech' || event.error === 'aborted') {
-         console.warn('Voice recognition aborted/no-speech:', event.error);
-         setIsListening(false);
-         return;
-      }
-      console.error('Speech recognition error', event.error);
-      setIsListening(false);
-      showToast('Error listening: ' + event.error, 'error');
-    };
-
-    try {
-        recognition.start();
-    } catch (e) {
-        console.error("Start error", e);
-    }
-  };
-
-  const stopListening = () => {
-      console.log('Manually stopping voice recognition...');
-      if (recognitionRef.current) {
-          recognitionRef.current.stop();
-      }
-      setIsListening(false);
   };
 
 
@@ -1144,14 +1052,8 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
       {/* FABs */}
       {isCurrentMonth && (
         <div className="fixed bottom-24 sm:bottom-6 right-6 flex flex-col items-center gap-3 z-30">
-            {/* Voice Command Button */}
-            <button
-                onClick={isListening ? stopListening : startListening}
-                className={`rounded-full p-3 shadow-lg transition-all duration-300 ${isListening ? 'bg-red-500 text-white animate-pulse ring-4 ring-red-500/30' : 'bg-slate-700 dark:bg-slate-600 hover:bg-slate-800 text-white'}`}
-                title="Voice Command (Burmese)"
-            >
-                {isListening ? <MicOff size={24} /> : <Mic size={24} />}
-            </button>
+            {/* New Push-to-Talk Component */}
+            <VoiceExpenseInput onSpeechEnd={processVoiceCommand} />
 
             {/* Add Transaction Button */}
             <button
