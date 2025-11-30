@@ -14,6 +14,7 @@ interface VoiceExpenseInputProps {
   onTransactionsConfirmed: (transactions: AIParsedTransaction[]) => void;
 }
 
+// We keep this list for the AI logic, but we hide the dropdown in this version of the UI
 const CATEGORY_OPTIONS = [
   "Food", "Transport", "Shopping", "Health", "Bills/Internet", 
   "Phone Bill", "Gift/Donation", "Work", "Education", "General",
@@ -202,7 +203,7 @@ const VoiceExpenseInput: React.FC<VoiceExpenseInputProps> = ({ onTransactionsCon
                        <div className="bg-emerald-100 dark:bg-emerald-900/30 p-2 rounded-lg">
                            <FileText className="text-emerald-600 dark:text-emerald-400" size={20} />
                        </div>
-                       <h3 className="font-bold text-slate-900 dark:text-white text-lg">Edit & Confirm</h3>
+                       <h3 className="font-bold text-slate-900 dark:text-white text-lg">Confirm Transactions</h3>
                    </div>
                    <button onClick={() => setShowReviewModal(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white"><X size={24} /></button>
                </div>
@@ -212,54 +213,48 @@ const VoiceExpenseInput: React.FC<VoiceExpenseInputProps> = ({ onTransactionsCon
                        <p className="text-center text-slate-500 py-4">No transactions found.</p>
                    ) : (
                        parsedData.map((item, idx) => (
-                           <div key={idx} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-700/30 border border-slate-200 dark:border-slate-600 relative group">
-                               {/* Row 1: Label & Type */}
-                               <div className="flex gap-2 mb-2">
+                           <div key={idx} className="flex items-center gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-700/30 border border-slate-200 dark:border-slate-600 group">
+                               
+                               {/* 1. Description (Wide) */}
+                               <div className="flex-grow">
                                    <input 
                                      type="text" 
                                      value={item.label}
                                      onChange={(e) => updateTransaction(idx, 'label', e.target.value)}
-                                     className="flex-grow bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm font-medium text-slate-800 dark:text-white focus:outline-none focus:border-emerald-500"
+                                     className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm font-medium text-slate-800 dark:text-white focus:outline-none focus:border-emerald-500 placeholder-slate-400"
                                      placeholder="Description"
                                    />
+                               </div>
+
+                               {/* 2. Type (Compact) */}
+                               <div className="shrink-0">
                                    <select
                                      value={item.type}
                                      onChange={(e) => updateTransaction(idx, 'type', e.target.value)}
-                                     className={`w-28 rounded-lg border px-2 py-1 text-xs font-bold focus:outline-none ${item.type === TransactionType.INCOME ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/30'}`}
+                                     className={`rounded-lg border px-1 py-2 text-xs font-bold focus:outline-none cursor-pointer ${item.type === TransactionType.INCOME ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/30'}`}
                                    >
-                                       <option value={TransactionType.EXPENSE}>EXPENSE</option>
-                                       <option value={TransactionType.INCOME}>INCOME</option>
+                                       <option value={TransactionType.EXPENSE}>EXP</option>
+                                       <option value={TransactionType.INCOME}>INC</option>
                                    </select>
                                </div>
 
-                               {/* Row 2: Category & Amount & Delete */}
-                               <div className="flex gap-2 items-center">
-                                   <select
-                                       value={item.category}
-                                       onChange={(e) => updateTransaction(idx, 'category', e.target.value)}
-                                       className="flex-grow bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg px-2 py-2 text-sm text-slate-600 dark:text-slate-300 focus:outline-none focus:border-emerald-500"
-                                   >
-                                       {CATEGORY_OPTIONS.map(cat => (
-                                           <option key={cat} value={cat}>{cat}</option>
-                                       ))}
-                                   </select>
-                                   
-                                   <div className="relative w-32">
-                                       <input 
-                                         type="number" 
-                                         value={item.amount}
-                                         onChange={(e) => updateTransaction(idx, 'amount', parseFloat(e.target.value))}
-                                         className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg pl-3 pr-2 py-2 text-sm font-bold text-slate-800 dark:text-white text-right focus:outline-none focus:border-emerald-500"
-                                       />
-                                   </div>
-
-                                   <button 
-                                     onClick={() => removeTransaction(idx)}
-                                     className="p-2 text-slate-400 hover:text-red-500 transition hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
-                                   >
-                                       <Trash2 size={18} />
-                                   </button>
+                               {/* 3. Amount */}
+                               <div className="w-24 shrink-0">
+                                   <input 
+                                     type="number" 
+                                     value={item.amount}
+                                     onChange={(e) => updateTransaction(idx, 'amount', parseFloat(e.target.value))}
+                                     className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg px-2 py-2 text-sm font-bold text-slate-800 dark:text-white text-right focus:outline-none focus:border-emerald-500"
+                                   />
                                </div>
+
+                               {/* 4. Delete */}
+                               <button 
+                                 onClick={() => removeTransaction(idx)}
+                                 className="p-2 text-slate-400 hover:text-red-500 transition hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg shrink-0"
+                               >
+                                   <Trash2 size={18} />
+                               </button>
                            </div>
                        ))
                    )}
