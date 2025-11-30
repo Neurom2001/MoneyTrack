@@ -212,135 +212,89 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
-  // --- Voice Command Logic ---
-  const convertBurmeseNumbers = (str: string) => {
-    // Replace Burmese digits with English digits
-    const burmeseNums = ['၀', '၁', '၂', '၃', '၄', '၅', '၆', '၇', '၈', '၉'];
-    return str.replace(/[၀-၉]/g, (d) => burmeseNums.indexOf(d).toString());
-  };
-
+  // --- Voice Command Logic (AI Powered) ---
   const processVoiceCommand = async (transcript: string) => {
-    console.log('Original transcript:', transcript);
+    if (!transcript) return;
     
-    // 1. Normalize numbers
-    let cleanTranscript = convertBurmeseNumbers(transcript).toLowerCase();
-    
-    // 2. Regex to find "Description + Number" pairs
-    // Pattern: 
-    // (.+?) -> Group 1: Non-greedy match for text/description
-    // ((?:\d+,?)+(?:\.\d+)?) -> Group 2: The Number (digits, optional commas, optional decimal)
-    const regex = /(.+?)((?:\d+,?)+(?:\.\d+)?)/g;
-    
-    let match;
-    const parsedItems: Partial<Transaction>[] = [];
-    
-    // Fuzzy Keyword Mapping for Categories
-    const expenseMappings = [
-      { category: t.cat_food, keywords: ['စား', 'သောက်', 'မုန့်', 'ထမင်း', 'ကော်ဖီ', 'လက်ဖက်ရည်', 'နေ့လည်စာ', 'ညစာ', 'မနက်စာ', 'food', 'eat', 'drink', 'rice', 'coffee', 'tea'] },
-      { category: t.cat_transport, keywords: ['ကား', 'ဆီ', 'လမ်းစရိတ်', 'taxi', 'bus', 'တက္ကစီ', 'ရထား', 'ဆိုင်ကယ်', 'transport', 'fuel'] },
-      { category: t.cat_bill, keywords: ['ဖုန်း', 'အင်တာနက်', 'ဒေတာ', 'ဘေလ်', 'မီတာ', 'wifi', 'data', 'bill', 'internet'] },
-      { category: t.cat_shopping, keywords: ['ဈေး', 'ဝယ်', 'အင်္ကျီ', 'ဖိနပ်', 'shop', 'buy', 'clothes'] },
-      { category: t.cat_health, keywords: ['ဆေး', 'health', 'doctor', 'medicine'] }
-    ];
+    setIsSaving(true);
+    showToast(language === 'my' ? 'AI မှ စာရင်းများကို ခွဲခြားနေပါသည်...' : 'AI is parsing...', 'success');
 
-    const incomeMappings = [
-      { category: t.cat_salary, keywords: ['လစာ', 'salary'] },
-      { category: t.cat_bonus, keywords: ['ဘောနပ်စ်', 'bonus'] },
-      { category: t.cat_sales, keywords: ['အရောင်း', 'sales'] },
-      { category: t.cat_pocket, keywords: ['မုန့်ဖိုး', 'allowance'] },
-      { category: t.cat_refund, keywords: ['ပြန်ရ', 'refund'] }
-    ];
-    
-    // Income Detection Keywords (to switch Type)
-    const incomeKeywords = ['လစာ', 'ရတာ', 'ရတယ်', 'ဝင်ငွေ', 'income', 'received', 'get', 'salary', 'bonus', 'refund'];
+    try {
+        // Call the Backend AI Parser
+        const response = await fetch('/api/parse', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: transcript }),
+        });
 
-    while ((match = regex.exec(cleanTranscript)) !== null) {
-        let rawDescription = match[1]; // Text before number
-        let rawAmount = match[2].replace(/,/g, ''); // Number
-        
-        // Clean up description (remove trailing currency words, 'and', etc.)
-        rawDescription = rawDescription.replace(/(ကျပ်|ပိုက်ဆံ|amount|kyat|ks|and|ပြီးတော့|က)/g, '').trim();
-        
-        if (!rawDescription) continue;
+        const data = await response.json();
 
-        const amountVal = parseFloat(rawAmount);
-        
-        // Detect Type (Income vs Expense)
-        let txType = TransactionType.EXPENSE;
-        let mappingList = expenseMappings;
-        
-        if (incomeKeywords.some(k => rawDescription.includes(k))) {
-            txType = TransactionType.INCOME;
-            mappingList = incomeMappings;
-        }
+        if (data.transactions && Array.isArray(data.transactions) && data.transactions.length > 0) {
+            let successCount = 0;
 
-        // Map Category based on Type
-        let detectedLabel = '';
-        for (const map of mappingList) {
-            for (const keyword of map.keywords) {
-                if (rawDescription.includes(keyword)) {
-                    detectedLabel = map.category;
-                    break;
+            // Map AI response to our App Categories to ensure translations work
+            const mapCategory = (aiCategory: string, type: TransactionType) => {
+                 // The AI returns English category names like "Food", "Transport".
+                 // We map these to our TRANSLATION keys if needed, but since we store text labels in DB,
+                 // we can either store the localized string or the English key.
+                 // For consistency with the UI, let's map to the localized label.
+                 
+                 const tKey = aiCategory.toLowerCase();
+                 // Simple mapping based on known keys
+                 if (tKey.includes('food')) return t.cat_food;
+                 if (tKey.includes('transport')) return t.cat_transport;
+                 if (tKey.includes('shop')) return t.cat_shopping;
+                 if (tKey.includes('health')) return t.cat_health;
+                 if (tKey.includes('bill')) return t.cat_bill;
+                 if (tKey.includes('phone')) return t.cat_phone;
+                 if (tKey.includes('gift')) return t.cat_gift;
+                 if (tKey.includes('work')) return t.cat_work;
+                 if (tKey.includes('edu')) return t.cat_education;
+                 
+                 if (tKey.includes('salary')) return t.cat_salary;
+                 if (tKey.includes('bonus')) return t.cat_bonus;
+                 if (tKey.includes('sale')) return t.cat_sales;
+                 if (tKey.includes('pocket') || tKey.includes('allowance')) return t.cat_pocket;
+                 if (tKey.includes('refund')) return t.cat_refund;
+
+                 return t.cat_general;
+            };
+
+            for (const item of data.transactions) {
+                const mappedCategory = mapCategory(item.category, item.type as TransactionType);
+                const payload: Transaction = {
+                    id: '',
+                    amount: item.amount,
+                    label: item.label || mappedCategory, // Use AI label or fallback to category
+                    type: item.type as TransactionType,
+                    date: getLocalDate()
+                };
+                
+                const { data: savedData } = await saveTransaction(payload);
+                if (savedData) {
+                    setTransactions(prev => [...prev, savedData]);
+                    successCount++;
                 }
             }
-            if (detectedLabel) break;
-        }
 
-        // Fallback Label
-        if (!detectedLabel) {
-             // Use capitalized raw text
-             detectedLabel = rawDescription.charAt(0).toUpperCase() + rawDescription.slice(1);
-             if (detectedLabel.length === 0) detectedLabel = t.cat_general;
-        }
+            if (successCount > 0) {
+                showToast(language === 'my' 
+                    ? `${successCount} ခု စာရင်းသွင်းပြီးပါပြီ` 
+                    : `Added ${successCount} transactions`, 
+                    'success');
+            } else {
+                 showToast('Failed to save data', 'error');
+            }
 
-        parsedItems.push({
-            amount: amountVal,
-            label: detectedLabel,
-            type: txType,
-            date: getLocalDate()
-        });
-    }
-
-    if (parsedItems.length === 0) {
-        // Fallback for single item without clear separation or just a number
-        const singleAmountMatch = cleanTranscript.match(/[\d,]+(\.\d+)?/);
-        if (singleAmountMatch) {
-             setAmount(singleAmountMatch[0].replace(/,/g, ''));
-             setLabel(''); 
-             setType(TransactionType.EXPENSE);
-             setShowForm(true);
-             showToast(language === 'my' ? 'ရှင်းလင်းစွာ မကြားရပါ၊ ဖြည့်စွက်ပေးပါ' : 'Please complete details', 'error');
         } else {
              showToast(language === 'my' ? 'နားမလည်ပါ' : 'Could not understand', 'error');
         }
-        return;
-    }
 
-    // Batch Save
-    setIsSaving(true);
-    let successCount = 0;
-    
-    for (const item of parsedItems) {
-        try {
-            const { data } = await saveTransaction(item as Transaction);
-            if (data) {
-                setTransactions(prev => [...prev, data]);
-                successCount++;
-            }
-        } catch (e) {
-            console.error(e);
-        }
-    }
-    
-    setIsSaving(false);
-    
-    if (successCount > 0) {
-        showToast(language === 'my' 
-            ? `${successCount} ခု စာရင်းသွင်းပြီးပါပြီ` 
-            : `Added ${successCount} transactions`, 
-            'success');
-    } else {
-        showToast('Failed to save transactions', 'error');
+    } catch (error) {
+        console.error("AI Parse Error:", error);
+        showToast("Error processing voice command", 'error');
+    } finally {
+        setIsSaving(false);
     }
   };
 
