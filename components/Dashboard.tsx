@@ -19,7 +19,7 @@ import {
 } from 'recharts';
 import { TRANSLATIONS, Language } from '../utils/translations';
 
-// --- Type Definitions for Web Speech API ---
+// --- Extended Window Interface for Web Speech API ---
 interface IWindow extends Window {
   webkitSpeechRecognition: any;
   SpeechRecognition: any;
@@ -228,11 +228,14 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
   };
 
   const processVoiceCommand = async (transcript: string) => {
+    console.log('Processing transcript:', transcript);
     const cleanTranscript = convertBurmeseNumbers(transcript);
+    console.log('Clean transcript (numbers converted):', cleanTranscript);
     
     // Regex to find numbers (Amount)
     const amountMatch = cleanTranscript.match(/(\d+)/);
     const detectedAmount = amountMatch ? amountMatch[0] : '';
+    console.log('Detected Amount:', detectedAmount);
     
     if (!detectedAmount) {
         showToast(language === 'my' ? 'ပမာဏကို နားမလည်ပါ (ဥပမာ: မနက်စာ ၁၅၀၀)' : 'Could not detect amount', 'error');
@@ -271,6 +274,8 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
         detectedLabel = potentialLabel || (language === 'my' ? 'အထွေထွေ' : 'General');
     }
 
+    console.log('Detected Label:', detectedLabel);
+
     if (detectedAmount && detectedLabel) {
         // AUTO SAVE Logic
         setIsSaving(true);
@@ -283,6 +288,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
         };
 
         try {
+            console.log('Attempting to save transaction via Voice...');
             const { data, error } = await saveTransaction(newTransactionPayload);
             if (data) {
                 setTransactions(prev => [...prev, data]);
@@ -291,9 +297,11 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
                     : `Added: ${detectedLabel} - ${detectedAmount}`, 
                     'success');
             } else {
+                console.error('Save failed:', error);
                 showToast('Failed to auto-save: ' + error, 'error');
             }
         } catch (e: any) {
+            console.error('System error saving transaction:', e);
             showToast('System Error: ' + e.message, 'error');
         } finally {
             setIsSaving(false);
@@ -313,6 +321,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
     const SpeechRecognition = Window.SpeechRecognition || Window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
+      console.error('Web Speech API not supported in this browser.');
       showToast('Web Speech API is not supported in this browser.', 'error');
       return;
     }
@@ -323,6 +332,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
         return;
     }
 
+    console.log('Initializing Speech Recognition...');
     const recognition = new SpeechRecognition();
     recognitionRef.current = recognition; // Store ref
     recognition.lang = 'my-MM'; // Set to Burmese
@@ -330,25 +340,30 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
     recognition.interimResults = false;
 
     recognition.onstart = () => {
+      console.log('Voice recognition started.');
       setIsListening(true);
     };
 
     // Critical: Stop immediately when speech ends (Silence detection)
     recognition.onspeechend = () => {
+        console.log('Speech ended (silence detected). Stopping recognition...');
         recognition.stop();
     };
 
     recognition.onend = () => {
+      console.log('Voice recognition ended.');
       setIsListening(false);
       recognitionRef.current = null;
     };
 
     recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript;
+      console.log('Voice result received:', transcript);
       processVoiceCommand(transcript);
     };
 
     recognition.onnomatch = () => {
+        console.log('Voice recognition: No match.');
         setIsListening(false);
         showToast(language === 'my' ? 'နားမလည်ပါ၊ ပြန်ပြောပါ' : 'Did not understand', 'error');
     };
@@ -356,6 +371,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
     recognition.onerror = (event: any) => {
       // Ignore 'aborted' error which happens on manual stop or auto-stop race conditions
       if (event.error === 'no-speech' || event.error === 'aborted') {
+         console.warn('Voice recognition aborted/no-speech:', event.error);
          setIsListening(false);
          return;
       }
@@ -372,6 +388,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
   };
 
   const stopListening = () => {
+      console.log('Manually stopping voice recognition...');
       if (recognitionRef.current) {
           recognitionRef.current.stop();
       }
