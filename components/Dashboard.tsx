@@ -227,7 +227,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
     return str.replace(/[၀-၉]/g, (d) => burmeseNums.indexOf(d).toString());
   };
 
-  const processVoiceCommand = (transcript: string) => {
+  const processVoiceCommand = async (transcript: string) => {
     const cleanTranscript = convertBurmeseNumbers(transcript);
     
     // Regex to find numbers (Amount)
@@ -271,12 +271,41 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
         detectedLabel = potentialLabel || (language === 'my' ? 'အထွေထွေ' : 'General');
     }
 
-    // Populate Form
-    setAmount(detectedAmount);
-    setLabel(detectedLabel);
-    setType(TransactionType.EXPENSE); // Default voice to Expense for now
-    setShowForm(true);
-    showToast(language === 'my' ? 'အသံဖြင့် စာရင်းသွင်းရန် ပြင်ဆင်ပြီးပါပြီ' : 'Voice command processed', 'success');
+    if (detectedAmount && detectedLabel) {
+        // AUTO SAVE Logic
+        setIsSaving(true);
+        const newTransactionPayload: Transaction = {
+            id: '', 
+            amount: parseFloat(detectedAmount),
+            label: detectedLabel,
+            date: getLocalDate(), 
+            type: TransactionType.EXPENSE, // Default to Expense
+        };
+
+        try {
+            const { data, error } = await saveTransaction(newTransactionPayload);
+            if (data) {
+                setTransactions(prev => [...prev, data]);
+                showToast(language === 'my' 
+                    ? `စာရင်းသွင်းပြီးပါပြီ: ${detectedLabel} - ${detectedAmount} ကျပ်` 
+                    : `Added: ${detectedLabel} - ${detectedAmount}`, 
+                    'success');
+            } else {
+                showToast('Failed to auto-save: ' + error, 'error');
+            }
+        } catch (e: any) {
+            showToast('System Error: ' + e.message, 'error');
+        } finally {
+            setIsSaving(false);
+        }
+    } else {
+        // Populate Form if data is incomplete
+        setAmount(detectedAmount);
+        setLabel(detectedLabel);
+        setType(TransactionType.EXPENSE); 
+        setShowForm(true);
+        showToast(language === 'my' ? 'အသံဖြင့် စာရင်းသွင်းရန် ပြင်ဆင်ပြီးပါပြီ' : 'Voice command processed', 'success');
+    }
   };
 
   const startListening = () => {
@@ -325,8 +354,8 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
     };
 
     recognition.onerror = (event: any) => {
-      if (event.error === 'no-speech') {
-         // User didn't say anything
+      // Ignore 'aborted' error which happens on manual stop or auto-stop race conditions
+      if (event.error === 'no-speech' || event.error === 'aborted') {
          setIsListening(false);
          return;
       }
@@ -335,7 +364,11 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
       showToast('Error listening: ' + event.error, 'error');
     };
 
-    recognition.start();
+    try {
+        recognition.start();
+    } catch (e) {
+        console.error("Start error", e);
+    }
   };
 
   const stopListening = () => {
